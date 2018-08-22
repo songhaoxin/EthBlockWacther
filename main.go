@@ -2,10 +2,36 @@ package main
 
 import (
 	"strconv"
+	"sync"
 	"fmt"
+	"time"
 )
 
 func main()  {
+
+	wg := &sync.WaitGroup{}
+	wg.Add(1)
+
+	var c chan string = make(chan string,100)
+	go func() {
+		for {
+			for i := 1; i < 10; i++ {
+				c <- "abc" + strconv.Itoa(i)
+			}
+			time.Sleep(2 * time.Second)
+		}
+		//wg.Done()
+	}()
+
+	go func() {
+		for   {
+			for v:= range c {
+				fmt.Println(v)
+			}
+		}
+	}()
+
+	wg.Wait()
 	/*
 	fmt.Println("Block Wacther is Running...")
 	var wthr = wacther2.BlockWacther{}
@@ -18,6 +44,7 @@ func main()  {
 	fmt.Println("End")
 	*/
 
+	/*
 	str := "0xf"
 	intStr,_ := strconv.ParseInt(str,0,64)
 	fmt.Println(intStr)
@@ -25,6 +52,6 @@ func main()  {
 
 	str = strconv.FormatInt(intStr,3)
 	fmt.Println(str)
-
+	*/
 
 }

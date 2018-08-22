@@ -18,7 +18,10 @@ type TransInterface interface {
 		gas string,
 		txHash string)
 
-	//确认交易 （区块号）
+	//根据交易Hash 确认交易
+	AffirmTrans(transHash string)
 
-	// 重发交易 (区块号）
+	// 根据交易Hash 重发交易
+	ResendTrans(transHash string)
+
 }

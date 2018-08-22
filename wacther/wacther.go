@@ -244,9 +244,13 @@ func (bw BlockWacther) getNewestBlockNumber() int64  {
 // 确认交易
 func (bw BlockWacther) AffirmTranscations()  {
 	//通过chain实现休眠
+	if nil == bw.affirmChain {
+		return
+	}
 	for {
-		fmt.Println("确认交易 。。。。")
-		time.Sleep(time.Second * 3)
+		for v := range bw.affirmChain {
+			fmt.Println(v)
+		}
 	}
 
 }
