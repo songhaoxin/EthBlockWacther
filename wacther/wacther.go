@@ -4,45 +4,27 @@ import (
 	"fmt"
 	//"sync"
 	"time"
-	"clmwalletWacther/blockpool"
-	"clmwalletWacther/modles/blocknode"
+	"clmwallet-block-wacther/blockpool"
+	"clmwallet-block-wacther/modles/blocknode"
 	"github.com/ethereum/go-ethereum/rpc"
-	"clmwalletWacther/clinterface"
-	"clmwalletWacther/config"
+	"clmwallet-block-wacther/clinterface"
+	"clmwallet-block-wacther/config"
 	"strconv"
+	"reflect"
 )
 
 
 
 
 type BlockWacther struct {
-	// 1、用于实时同步区块的数据结构(包装map) ---> 关联数据库表 blockNode
 	blockPool *blockpool.BlockPool
 
-	// 2、用于保存确认区块的数据结构（待定) ---->关联数据库表 blockNode 还要操作 交易业务表
 	affirmChain chan *blocknode.BlockNodeInfo
-
-	// 3、用于保存需要重发的交易信息（待定）---->关联数据库表 blockNode 还要操作 交易业务表
 	resendChain chan *blocknode.BlockNodeInfo
 
 	client *rpc.Client
 
-	
-
-	// 需要访问 交易数据库表 和 帐户（余额）表
-
-
-	// 方法：
-	// 提供三个核心方法
-	// 1.获取区块、解析区块、加入确认队列、加入重发队列
-
-	// 2.从确认队列中进行确认
-	// 3.从重发队列中重发
-
-
-	//需要外面传入的方法
 	TransHandler clinterface.TransInterface
-	FecthBlockHandler clinterface.FecthBlockInterface
 
 }
 
@@ -190,23 +172,51 @@ func (bw BlockWacther)parseBlock(blockInfo map[string]interface{})  {
 	//得到交易信息数组
 	transInfoI := blockInfo["transactions"]
 	if nil == transInfoI {return }
-	transInfo,ok := transInfoI.([]map[string]string)
+	fmt.Println(reflect.TypeOf(transInfoI))
+	transInfo,ok := transInfoI.([]interface{})
 	if !ok {
 		return
 	}
 
+	fmt.Println(transInfo)
+
 	//	解析每一个交易
 	// 	WARNING:伪代码,具体字段需要确认
-	for _,m := range transInfo {
-		blockNumber := m["blockNumber"]
-		blockHash := m["blockHash"]
-		from := m["from"]
-		to := m["to"]
-		tHash := m["Hx"] //交易的Hash
-		value := m["value"]
-		gas := m["gas"]
+	for _,mI := range transInfo {
+		fmt.Println(reflect.TypeOf(mI))
+		m,ok := mI.(map[string]interface {})
+		if !ok {
+			break
+		}
+
+		blockHash := m["blockHash"].(string)
+		fmt.Println(blockHash)
+
+		blockNumber := m["blockNumber"].(string)
+		fmt.Println(blockNumber)
+
+		//transactionIndex := m["transactionIndex"].(string)
+
+		hash := m["hash"].(string)
+		fmt.Println(hash)
+
+		//nonce := m["nonce"].(string)
+
+		from := m["from"].(string)
+		fmt.Println(from)
+
+		to := m["to"].(string)
+		fmt.Println(to)
+
+		value := m["value"].(string)
+		fmt.Println(value)
+
+		//gas := m["gas"].(string)
+		//gasPrice := m["gasPrice"].(string)
+		//input := m["input"].(string)
 
 
+		/*
 		//根据地址判断是不是属于超链平台上的用户
 		if nil != bw.TransHandler {
 			if bw.TransHandler.ExistAddress(from) { //是我们发出的交易
@@ -218,6 +228,7 @@ func (bw BlockWacther)parseBlock(blockInfo map[string]interface{})  {
 				bw.TransHandler.InsertTransInfo(from,to,value,gas,tHash)
 			}
 		}
+		*/
 	}
 }
 

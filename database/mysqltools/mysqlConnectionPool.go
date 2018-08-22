@@ -6,7 +6,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
-	"clmwalletWacther/config"
+	"clmwallet-block-wacther/config"
 )
 
 type MysqlConnectionPool struct {

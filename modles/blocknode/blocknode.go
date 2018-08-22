@@ -1,7 +1,7 @@
 package blocknode
 
 import (
-	"clmwallet/database/mysqltools"
+	"clmwallet-block-wacther/database/mysqltools"
 	"errors"
 )
 
@@ -41,6 +41,7 @@ func (info *BlockNodeInfo) Save() error  {
 	return nil
 }
 
+/// 从数据库中删除信息
 func (info *BlockNodeInfo) Delete() error  {
 	if 0 >= info.BlockNumber {
 		return errors.New("Primary key don't allow Empty.")
@@ -51,4 +52,17 @@ func (info *BlockNodeInfo) Delete() error  {
 		return err
 	}
 	return nil
+}
+
+func FindAll()  {
+	//nodeInfo := make([]BlockNodeInfo,2)
+	//var nodes  []BlockNodeInfo
+	//db := mysqltools.GetInstance().GetMysqlDB()
+	//if err := db.Find(nodes).Error;err != nil {
+	//
+	//
+	//}
+	//
+	//fmt.Println(nodeInfo)
+
 }

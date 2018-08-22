@@ -2,7 +2,7 @@ package transaction
 
 import (
 	"github.com/jinzhu/gorm"
-	"clmwallet/database/mysqltools"
+	"../../database/mysqltools"
 )
 
 

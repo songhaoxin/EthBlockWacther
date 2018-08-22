@@ -1,7 +1,7 @@
 package blockpool
 
 import (
-	"clmwalletWacther/modles/blocknode"
+	"clmwallet-block-wacther/modles/blocknode"
 	"sync"
 )
 
@@ -69,7 +69,7 @@ func (b *BlockPool) ReciveBlock(node *blocknode.BlockNodeInfo) *blocknode.BlockN
 	var n *blocknode.BlockNodeInfo = nil
 	if oldHash, ok := b.pool[k]; ok { //存在旧值
 		if oldHash != v {
-			n = &blocknode.BlockNodeInfo{k, oldHash,""}
+			n = &blocknode.BlockNodeInfo{k, oldHash,"",""}
 		}
 	} else {
 		b.size++
@@ -91,7 +91,7 @@ func (b *BlockPool) LookBocks4AffirmTrans() (bool, *blocknode.BlockNodeInfo) {
 
 	for k, v := range b.pool {
 		if b.endIdx-k+1 >= b.AffiremBlockHeigh {
-			return true, &blocknode.BlockNodeInfo{k, v,""}
+			return true, &blocknode.BlockNodeInfo{k, v,"",""}
 		}
 	}
 	return false, nil

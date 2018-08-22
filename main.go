@@ -1,29 +1,19 @@
 package main
 
-import "fmt"
+import (
+	"clmwallet-block-wacther/wacther"
+)
 
 func main()  {
 
 	//node := &blocknode.BlockNodeInfo{}
 	//fmt.Println(node)
-	type N struct {
-		A string
-		B string
-		C string
-	}
 
-	m := make(map[int64] *N)
-	n := &N{}
-	n.A = "A"
-	n.B = "B"
+	//blocknode.FindAll()
 
-	m[1234] = n
+	wacther := wacther.Init()
 
-
-	n1 := m[1234]
-
-	fmt.Println(n1.A)
-	fmt.Println(n1.B)
+	wacther.FecthBlockByNumber("latest")
 
 	/*
 	wg := &sync.WaitGroup{}
