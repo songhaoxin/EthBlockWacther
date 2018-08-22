@@ -9,6 +9,7 @@ type BlockNodeInfo struct {
 	BlockNumber int64		`gorm:"primary_key"`
 	BlockHash   string
 	ParentHash string `gorm:"-"`
+	TransHash string
 }
 
 func (BlockNodeInfo)  TableName() string	{

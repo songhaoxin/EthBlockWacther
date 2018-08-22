@@ -6,6 +6,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"clmwalletWacther/config"
 )
 
 type MysqlConnectionPool struct {
@@ -28,7 +29,7 @@ func GetInstance() *MysqlConnectionPool {
 
 func (m *MysqlConnectionPool) InitDataPool() (isSuccess bool) {
 
-	db, err_db = gorm.Open("mysql", "root:root@tcp(120.77.223.246)/clwallet?charset=utf8&parseTime=True&loc=Local")
+	db, err_db = gorm.Open("mysql",config.BlockDataConnectString)
 	if nil != err_db {
 		log.Fatal(err_db)
 		return false

@@ -1,14 +1,31 @@
 package main
 
-import (
-	"strconv"
-	"sync"
-	"fmt"
-	"time"
-)
+import "fmt"
 
 func main()  {
 
+	//node := &blocknode.BlockNodeInfo{}
+	//fmt.Println(node)
+	type N struct {
+		A string
+		B string
+		C string
+	}
+
+	m := make(map[int64] *N)
+	n := &N{}
+	n.A = "A"
+	n.B = "B"
+
+	m[1234] = n
+
+
+	n1 := m[1234]
+
+	fmt.Println(n1.A)
+	fmt.Println(n1.B)
+
+	/*
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 
@@ -32,6 +49,7 @@ func main()  {
 	}()
 
 	wg.Wait()
+	*/
 	/*
 	fmt.Println("Block Wacther is Running...")
 	var wthr = wacther2.BlockWacther{}
