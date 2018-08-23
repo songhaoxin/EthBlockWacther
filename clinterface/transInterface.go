@@ -25,7 +25,4 @@ type TransInterface interface {
 	// 根据交易Hash 重发交易
 	ResendTrans(transHash string)
 
-	// 从交易表中获取所有还没有确认的交易的 区块号、区块hash、交易hash
-
-
 }

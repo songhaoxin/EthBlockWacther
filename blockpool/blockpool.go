@@ -19,7 +19,7 @@ type BlockPool struct {
 }
 
 /// 创建 "BlockPool"实例
-func InitBlockPool() *BlockPool {
+func Init() *BlockPool {
 	p := &BlockPool{
 		startIdx:          -1,
 		endIdx:            -1,
@@ -100,7 +100,10 @@ func (b *BlockPool) loadBlockFromDB(node *blocknode.BlockNodeInfo)  {
 	}
 
 	// 更新startIdx 与 endIdx
-	if k < b.startIdx {
+	if 0 == b.size {
+		b.startIdx = k
+		b.endIdx = k
+	} else if k < b.startIdx {
 		b.startIdx = k
 	} else if k > b.endIdx {
 		b.endIdx = k
@@ -131,7 +134,10 @@ func (b *BlockPool) ReciveBlock(node *blocknode.BlockNodeInfo) *blocknode.BlockN
 	}
 
 	// 更新startIdx 与 endIdx
-	if k < b.startIdx {
+	if 0 == b.size {
+		b.startIdx = k
+		b.endIdx = k
+	} else if k < b.startIdx {
 		b.startIdx = k
 	} else if k > b.endIdx {
 		b.endIdx = k

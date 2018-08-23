@@ -1,9 +1,7 @@
 package wacther
 
 import (
-	"fmt"
-	//"sync"
-	"time"
+
 	"clmwallet-block-wacther/blockpool"
 	"clmwallet-block-wacther/modles/blocknode"
 	"github.com/ethereum/go-ethereum/rpc"
@@ -12,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
+	"fmt"
 )
 
 
@@ -24,6 +24,7 @@ type BlockWacther struct {
 	resendChain chan string
 
 	client *rpc.Client
+	fecthTimer *time.Timer
 
 	TransHandler clinterface.TransInterface
 
@@ -31,9 +32,10 @@ type BlockWacther struct {
 
 func Init() *BlockWacther {
 	b := &BlockWacther{
-		blockPool:blockpool.InitBlockPool(),
+		blockPool:blockpool.Init(),
 		affirmChain:make(chan string,1000),
 		resendChain:make(chan string,1000),
+		fecthTimer:time.NewTimer(config.TimeDelayInSecand * time.Second),
 	}
 	return b
 }
@@ -43,18 +45,56 @@ var wg sync.WaitGroup
 
 func (bw BlockWacther) WacthStart()  {
 	wg.Add(1)
-	go bw.FecthAndParseBlock()
+	go bw.fecthParseBlock()
 	go bw.AffirmTranscations()
 	go bw.ReSendTranscations()
 	wg.Wait()
+}
+
+// 确认交易
+func (bw BlockWacther) AffirmTranscations()  {
+	if nil == bw.affirmChain {
+		return
+	}
+	for {
+		for th := range bw.affirmChain {
+			if  nil != bw.TransHandler {
+				bw.TransHandler.AffirmTrans(th)
+			}
+		}
+	}
+
+}
+
+// 重发交易
+func (bw BlockWacther)ReSendTranscations()  {
+	if nil == bw.resendChain {return }
+	for {
+		for th := range bw.resendChain {
+			if nil != bw.TransHandler {
+				bw.TransHandler.ResendTrans(th)
+			}
+		}
+	}
 }
 
 
 
 
 /// 从geth结点上同步最新区块，并解析区块，实现交易确认、处理需要重新打包的交易
-func (bw BlockWacther)FecthAndParseBlock()  {
+func (bw BlockWacther)fecthParseBlock()  {
+	for {
+		select {
+		case <-bw.fecthTimer.C:
+			fmt.Println("开始同步区块")
+			bw.fecthTimer.Stop()
+			bw._fecthParseBlock()
+			bw.fecthTimer.Reset(time.Second * config.TimeDelayInSecand)
+		}
+	}
+}
 
+func (bw BlockWacther) _fecthParseBlock() {
 	//获取最新的区块
 	ethLastNode := bw.fecthBlockByNumber("latest")
 
@@ -75,7 +115,6 @@ func (bw BlockWacther)FecthAndParseBlock()  {
 
 	// 选出已经确认的交易
 	bw.putBlock2affirmChain()
-
 }
 
 // 选出需要重新打包发送的区块号
@@ -158,9 +197,9 @@ func (bw BlockWacther) fecthBlockByHash(blockHash string) *blocknode.BlockNodeIn
 		return nil
 	}
 
-	number,_ := blockInfo["blockNumber"].(string)
+	number,_ := blockInfo["number"].(string)
 	numberInt,_ := strconv.ParseInt(number,0,64)
-	hash,_ := blockInfo["blockHash"].(string)
+	hash,_ := blockInfo["hash"].(string)
 	parentHash,_ := blockInfo["parentHash"].(string)
 
 	node := &blocknode.BlockNodeInfo{
@@ -253,31 +292,3 @@ func (bw BlockWacther) getNewestBlockNumber() int64  {
 }
 
 
-
-
-
-
-
-// 确认交易
-func (bw BlockWacther) AffirmTranscations()  {
-	//通过chain实现休眠
-	if nil == bw.affirmChain {
-		return
-	}
-	for {
-		for v := range bw.affirmChain {
-			fmt.Println(v)
-		}
-	}
-
-}
-
-// 重发交易 仅通知 相关的API重发，不作具体重新发送功能
-func (bw BlockWacther)ReSendTranscations()  {
-	// 访问交易表
-	//通过chain实现休眠
-	for {
-		fmt.Println("ReSend Transcations ...")
-		time.Sleep(time.Second * 5)
-	}
-}
