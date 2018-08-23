@@ -11,17 +11,21 @@ type TransInterface interface {
 	AddBlockNumberHash(blockNumber string,blockHash string,withTransHash string)
 
 	//根据解析的交易的信息（别人向我们的帐户转帐这一情况），添加一条记录到交易表
-	InsertTransInfo(
+	InsertReceiveTransInfo(
+		hash string,
+		blockHash string,
+		blockNumber string,
 		fromAddress string,
 		toAddress string,
-		value string,
-		gas string,
-		txHash string)
+		value string)
 
 	//根据交易Hash 确认交易
 	AffirmTrans(transHash string)
 
 	// 根据交易Hash 重发交易
 	ResendTrans(transHash string)
+
+	// 从交易表中获取所有还没有确认的交易的 区块号、区块hash、交易hash
+
 
 }

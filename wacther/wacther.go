@@ -10,7 +10,8 @@ import (
 	"clmwallet-block-wacther/clinterface"
 	"clmwallet-block-wacther/config"
 	"strconv"
-	"reflect"
+	"strings"
+	"sync"
 )
 
 
@@ -19,8 +20,8 @@ import (
 type BlockWacther struct {
 	blockPool *blockpool.BlockPool
 
-	affirmChain chan *blocknode.BlockNodeInfo
-	resendChain chan *blocknode.BlockNodeInfo
+	affirmChain chan string
+	resendChain chan string
 
 	client *rpc.Client
 
@@ -31,83 +32,88 @@ type BlockWacther struct {
 func Init() *BlockWacther {
 	b := &BlockWacther{
 		blockPool:blockpool.InitBlockPool(),
-		affirmChain:make(chan *blocknode.BlockNodeInfo,1000),
-		resendChain:make(chan *blocknode.BlockNodeInfo,1000),
+		affirmChain:make(chan string,1000),
+		resendChain:make(chan string,1000),
 	}
 	return b
 }
 
 
-//var wg sync.WaitGroup
+var wg sync.WaitGroup
 
-func (bw BlockWacther) StartWacth()  {
-	//wg.Add(1)
-	//go bw.Fecther2Parse()
-	//go bw.AffirmTranscations()
-	//go bw.ReSendTranscations()
-	//wg.Wait()
+func (bw BlockWacther) WacthStart()  {
+	wg.Add(1)
+	go bw.FecthAndParseBlock()
+	go bw.AffirmTranscations()
+	go bw.ReSendTranscations()
+	wg.Wait()
 }
 
 
 
 
-
-func (bw BlockWacther)FecthAndParseBlock(currentBlockNumber int64)  {
+/// 从geth结点上同步最新区块，并解析区块，实现交易确认、处理需要重新打包的交易
+func (bw BlockWacther)FecthAndParseBlock()  {
 
 	//获取最新的区块
-	ethLastNode := bw.FecthBlockByNumber("latest")
+	ethLastNode := bw.fecthBlockByNumber("latest")
 
-
-	//获取eth最新区块与本地同步的最新区块的高度之差
-	var diff int64 = 0
+	var needFecthCount int64 = 0
 	if !bw.blockPool.IsEmpty() {
-		diff = ethLastNode.BlockNumber - bw.blockPool.LatestNumber() + config.CLAffiremBlockHeigh
+		needFecthCount = ethLastNode.Number - bw.blockPool.LatestNumber() - 1
 	}
+	needFecthCount += config.AffiremBlockHeigh
 
-	//由当前区块向前拉取区块
-	var count int64 = 0
-	var nodeHash = ethLastNode.BlockHash
-	for ; count < diff;count++  {
-		node := bw.FecthBlockByHash(nodeHash)
-		bw.putBlock2affirmChain(node)
+	var fecthCount int64 = 0
+	node := ethLastNode
+	hash := node.ParentHash
+	for ; fecthCount < needFecthCount;fecthCount++  {
 		bw.putBlock2resendChain(node)
-
-		nodeHash = node.ParentHash
+		node = bw.fecthBlockByHash(hash)
+		hash = node.ParentHash
 	}
+
+	// 选出已经确认的交易
+	bw.putBlock2affirmChain()
 
 }
 
 // 选出需要重新打包发送的区块号
 func (bw BlockWacther) putBlock2resendChain(info *blocknode.BlockNodeInfo)  {
-	if nil == bw.resendChain {
-		return
-	}
+
+	if nil == info {return }
 
 	node := bw.blockPool.ReciveBlock(info)
-	if node != nil {
-		bw.resendChain <- node
+	if nil == node || "" == node.TransHash {return }
+
+	tHashs := strings.Split(node.TransHash, ";")
+	for _,tH := range tHashs {
+		if "" != tH {
+			if nil != bw.resendChain {
+				bw.resendChain <- tH
+			}
+		}
 	}
 
 }
 
-//选出需要确认的
-func (bw BlockWacther) putBlock2affirmChain(info *blocknode.BlockNodeInfo)  {
-	if nil == bw.affirmChain {
-		return
-	}
+//选出需要确认的交易
+func (bw BlockWacther) putBlock2affirmChain()  {
 
-	ok,node := bw.blockPool.LookBocks4AffirmTrans()
-	if !ok {
-		return
-	}
+	txHashs := bw.blockPool.LookBocks4AffirmTrans()
 
-	if node != nil {
-		bw.affirmChain <- node
+	for _,txHash := range txHashs {
+		if "" != txHash {
+			if nil != bw.affirmChain {
+				bw.affirmChain <- txHash
+			}
+		}
 	}
-
 }
+
+
 // 通过区块号拉取区块
-func (bw BlockWacther) FecthBlockByNumber(blockNumber string) *blocknode.BlockNodeInfo {
+func (bw BlockWacther) fecthBlockByNumber(blockNumber string) *blocknode.BlockNodeInfo {
 
 	client,err := bw.getClient()
 	if nil != err {
@@ -119,24 +125,28 @@ func (bw BlockWacther) FecthBlockByNumber(blockNumber string) *blocknode.BlockNo
 		return nil
 	}
 
-	bw.parseBlock(blockInfo) //解析区块
-
-	number,_ := blockInfo["blockNumber"].(string)
+	number,_ := blockInfo["number"].(string)
 	numberInt,_ := strconv.ParseInt(number,0,64)
-	hash,_ := blockInfo["blockHash"].(string)
+	hash,_ := blockInfo["hash"].(string)
 	parentHash,_ := blockInfo["parentHash"].(string)
 
 	node := &blocknode.BlockNodeInfo{
-		BlockNumber:numberInt,
-		BlockHash:hash,
+		Number:numberInt,
+		Hash:hash,
 		ParentHash:parentHash,
 	}
+
+	transHashs := ""
+	if false == bw.blockPool.ContainElement(node) {
+		transHashs = bw.parseBlock(blockInfo) //解析区块
+	}
+	node.TransHash = transHashs
 
 	return node
 }
 
 // 通过区块HASH拉取区块
-func (bw BlockWacther) FecthBlockByHash(blockHash string) *blocknode.BlockNodeInfo{
+func (bw BlockWacther) fecthBlockByHash(blockHash string) *blocknode.BlockNodeInfo{
 
 	client,err := bw.getClient()
 	if nil != err {
@@ -148,88 +158,82 @@ func (bw BlockWacther) FecthBlockByHash(blockHash string) *blocknode.BlockNodeIn
 		return nil
 	}
 
-	bw.parseBlock(blockInfo)
-
 	number,_ := blockInfo["blockNumber"].(string)
 	numberInt,_ := strconv.ParseInt(number,0,64)
 	hash,_ := blockInfo["blockHash"].(string)
 	parentHash,_ := blockInfo["parentHash"].(string)
 
 	node := &blocknode.BlockNodeInfo{
-		BlockNumber:numberInt,
-		BlockHash:hash,
+		Number:numberInt,
+		Hash:hash,
 		ParentHash:parentHash,
 	}
+
+	transHashs := ""
+	if false == bw.blockPool.ContainElement(node) {
+		transHashs = bw.parseBlock(blockInfo) //解析区块
+	}
+	node.TransHash = transHashs
 
 	return node
 
 }
 
 ///解析区块信息
-func (bw BlockWacther)parseBlock(blockInfo map[string]interface{})  {
-	if nil == blockInfo { return }
+func (bw BlockWacther)parseBlock(blockInfo map[string]interface{}) string {
+	if nil == blockInfo { return "" }
 
 	//得到交易信息数组
 	transInfoI := blockInfo["transactions"]
-	if nil == transInfoI {return }
-	fmt.Println(reflect.TypeOf(transInfoI))
+	if nil == transInfoI {return ""}
+
 	transInfo,ok := transInfoI.([]interface{})
 	if !ok {
-		return
+		return ""
 	}
 
-	fmt.Println(transInfo)
+
+	// 保存本次区块中所包含的与本平台帐户相关的 '交易hash'
+	var transHashs string = ""
 
 	//	解析每一个交易
-	// 	WARNING:伪代码,具体字段需要确认
 	for _,mI := range transInfo {
-		fmt.Println(reflect.TypeOf(mI))
 		m,ok := mI.(map[string]interface {})
 		if !ok {
 			break
 		}
 
 		blockHash := m["blockHash"].(string)
-		fmt.Println(blockHash)
-
 		blockNumber := m["blockNumber"].(string)
-		fmt.Println(blockNumber)
-
 		//transactionIndex := m["transactionIndex"].(string)
-
 		hash := m["hash"].(string)
-		fmt.Println(hash)
-
 		//nonce := m["nonce"].(string)
-
 		from := m["from"].(string)
-		fmt.Println(from)
-
 		to := m["to"].(string)
-		fmt.Println(to)
-
 		value := m["value"].(string)
-		fmt.Println(value)
-
 		//gas := m["gas"].(string)
 		//gasPrice := m["gasPrice"].(string)
 		//input := m["input"].(string)
 
 
-		/*
 		//根据地址判断是不是属于超链平台上的用户
 		if nil != bw.TransHandler {
 			if bw.TransHandler.ExistAddress(from) { //是我们发出的交易
-				bw.TransHandler.AddBlockNumberHash(blockNumber,blockHash,tHash)
+				// 对已经发出去的交易，填充好区块号及区块Hash
+				bw.TransHandler.AddBlockNumberHash(blockNumber,blockHash,hash)
 			}
 
-			if bw.TransHandler.ExistAddress(to) {//是我们平台发出去的交易
+			if bw.TransHandler.ExistAddress(to) {//别人向本平台帐户转帐
 				//根据交易Hash 增加blockNumber/blockHash到交易数据库表
-				bw.TransHandler.InsertTransInfo(from,to,value,gas,tHash)
+				bw.TransHandler.InsertReceiveTransInfo(hash,blockHash,blockNumber,from,to,value)
 			}
+
+			transHashs = transHashs + hash + ";"
+
 		}
-		*/
 	}
+
+	return transHashs
 }
 
 
@@ -240,6 +244,8 @@ func (bw BlockWacther) getClient() (client *rpc.Client,err error) {
 	}
 	return bw.client,err
 }
+
+
 
 //获取本地同步最新的区块
 func (bw BlockWacther) getNewestBlockNumber() int64  {

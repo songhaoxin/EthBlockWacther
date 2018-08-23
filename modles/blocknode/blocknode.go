@@ -6,8 +6,8 @@ import (
 )
 
 type BlockNodeInfo struct {
-	BlockNumber int64		`gorm:"primary_key"`
-	BlockHash   string
+	Number int64		`gorm:"primary_key"`
+	Hash   string
 	ParentHash string `gorm:"-"`
 	TransHash string
 }
@@ -21,6 +21,13 @@ func init() {
 	if !db.HasTable(&BlockNodeInfo{}) {
 		db.CreateTable(&BlockNodeInfo{})
 	}
+}
+
+func (info *BlockNodeInfo) Equal(info1 *BlockNodeInfo) bool {
+	if nil == info1 {
+		return false
+	}
+	return info.Number == info1.Number && info.Hash == info1.Hash
 }
 
 /// 持久化到数据库
@@ -43,7 +50,7 @@ func (info *BlockNodeInfo) Save() error  {
 
 /// 从数据库中删除信息
 func (info *BlockNodeInfo) Delete() error  {
-	if 0 >= info.BlockNumber {
+	if 0 >= info.Number {
 		return errors.New("Primary key don't allow Empty.")
 	}
 
@@ -52,17 +59,4 @@ func (info *BlockNodeInfo) Delete() error  {
 		return err
 	}
 	return nil
-}
-
-func FindAll()  {
-	//nodeInfo := make([]BlockNodeInfo,2)
-	//var nodes  []BlockNodeInfo
-	//db := mysqltools.GetInstance().GetMysqlDB()
-	//if err := db.Find(nodes).Error;err != nil {
-	//
-	//
-	//}
-	//
-	//fmt.Println(nodeInfo)
-
 }

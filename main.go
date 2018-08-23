@@ -1,19 +1,21 @@
 package main
 
 import (
-	"clmwallet-block-wacther/wacther"
+	"clmwallet-block-wacther/modles/blocknode"
+	"fmt"
 )
 
 func main()  {
 
-	//node := &blocknode.BlockNodeInfo{}
-	//fmt.Println(node)
+	node := &blocknode.BlockNodeInfo{}
+	fmt.Println(node)
 
 	//blocknode.FindAll()
 
-	wacther := wacther.Init()
+	//wacther := wacther.Init()
 
-	wacther.FecthBlockByNumber("latest")
+	//wacther.FecthBlockByNumber("latest")
+
 
 	/*
 	wg := &sync.WaitGroup{}
