@@ -126,7 +126,11 @@ func (b *BlockPool) loadBlockFromDB(node *blocknode.BlockNodeInfo)  {
 
 /// 从区块链中接收一个区块信息，并找出孤立的区块（如果存在）
 func (b *BlockPool) ReciveBlock(node *blocknode.BlockNodeInfo) *blocknode.BlockNodeInfo {
-	if nil == node || nil == b.pool{
+	//if nil == node || nil == b.pool{
+	//	return nil
+	//}
+
+	if b.ContainElement(node) {
 		return nil
 	}
 

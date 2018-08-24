@@ -2,20 +2,44 @@ package main
 
 import (
 	"fmt"
-	"clmwallet-block-wacther/wacther"
+	"clmwallet-block-wacther/modles/blocknode"
+	"clmwallet-block-wacther/database/mysqltools"
 )
 
 func main()  {
 
+	//thd := &transactionhandler.EthTransactionHandler{}
+	//if true == thd.ExistAddress("0xbd88ba7a14b5263953f236d0182c311ff1102829") {
+	//	fmt.Println("打到了")
+	//} else {
+	//	fmt.Println("没有找到")
+	//}
 
+
+	/*
+	resp, err := http.Post("http://47.75.115.210:8781/wallet/Transaction/ExistAddress/",
+		"application/x-www-form-urlencoded",
+		strings.NewReader("address=0x0001"))
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		// handle error
+	}
+
+	fmt.Println(string(body))
+	*/
 
 	//node := &blocknode.BlockNodeInfo{}
 	//fmt.Println(node)
 
 	//blocknode.FindAll()
 
-	wacther := wacther.Init()
-	wacther.WacthStart()
+	//wacther := wacther.Init()
+	//wacther.WacthStart()
 
 
 	//var nodes []blocknode.BlockNodeInfo
@@ -26,6 +50,14 @@ func main()  {
 	//for _,n := range nodes{
 	//	fmt.Println(n)
 	//}
+	var node = &blocknode.BlockNodeInfo{}
+	db := mysqltools.GetInstance().GetMysqlDB()
+	db.First(node, 4) // 查询id为1的product
+
+	fmt.Println(node.Number)
+	fmt.Println(node.Hash)
+
+
 
 
 	fmt.Println("End")

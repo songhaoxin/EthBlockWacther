@@ -18,14 +18,29 @@ import (
 
 
 type BlockWacther struct {
+
+	// 维持同步的区块信息的存储池
+	// 该池中保存着足以用来确定交易的区块链信息
 	blockPool *blockpool.BlockPool
 
+	// 用来传递 需要确定 的交易hash 的通道
+	// 由专门的服务去从该通道中读取交易做进一步的处理
 	affirmChain chan string
+
+	// 用来传递 需要重新发送 的交易hash 的通道
+	// 由专门的服务去从该通道中读取交易做进一步的处理
 	resendChain chan string
 
+	// 用来从geth结点中同步区块的网络客户实例
 	client *rpc.Client
+
+	// 定时器，实现定时从geth结点中拉取区块信息
 	fecthTimer *time.Timer
 
+	// 满足TransInterface接口的交易处理器
+	// 负责具体处理 确认交易、重发交易 等功能
+	// 之所以设计成 接口方式，是为了解耦 拉取区块功能 和 处理交易功能
+	// 这样，该模块可以轻松的重用到 比特币 等其他的平台上去
 	TransHandler clinterface.TransInterface
 
 }
@@ -41,18 +56,21 @@ func Init() *BlockWacther {
 }
 
 
+
 var wg sync.WaitGroup
 
+
 func (bw BlockWacther) WacthStart()  {
+	// 不调用它的.Done()方法，以另类地实现循环
 	wg.Add(1)
 	go bw.fecthParseBlock()
-	go bw.AffirmTranscations()
-	go bw.ReSendTranscations()
+	go bw.affirmTranscations()
+	go bw.reSendTranscations()
 	wg.Wait()
 }
 
 // 确认交易
-func (bw BlockWacther) AffirmTranscations()  {
+func (bw BlockWacther) affirmTranscations()  {
 	if nil == bw.affirmChain {
 		return
 	}
@@ -68,7 +86,7 @@ func (bw BlockWacther) AffirmTranscations()  {
 }
 
 // 重发交易
-func (bw BlockWacther)ReSendTranscations()  {
+func (bw BlockWacther) reSendTranscations()  {
 	if nil == bw.resendChain {return }
 	for {
 		for th := range bw.resendChain {
@@ -107,8 +125,6 @@ func (bw BlockWacther) _fecthParseBlock() {
 		return
 
 	}
-
-
 
 	var needFecthCount int64 = 0
 	if !bw.blockPool.IsEmpty() {
