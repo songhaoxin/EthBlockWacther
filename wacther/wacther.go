@@ -11,7 +11,7 @@ import (
 	"strings"
 	"sync"
 	"time"
-	"fmt"
+	"log"
 )
 
 
@@ -58,6 +58,7 @@ func (bw BlockWacther) AffirmTranscations()  {
 	}
 	for {
 		for th := range bw.affirmChain {
+			log.Println("处理已经确认的交易:",th)
 			if  nil != bw.TransHandler {
 				bw.TransHandler.AffirmTrans(th)
 			}
@@ -71,6 +72,7 @@ func (bw BlockWacther)ReSendTranscations()  {
 	if nil == bw.resendChain {return }
 	for {
 		for th := range bw.resendChain {
+			log.Println("处理需要重新打包的交易:",th)
 			if nil != bw.TransHandler {
 				bw.TransHandler.ResendTrans(th)
 			}
@@ -80,15 +82,17 @@ func (bw BlockWacther)ReSendTranscations()  {
 
 
 
-
 /// 从geth结点上同步最新区块，并解析区块，实现交易确认、处理需要重新打包的交易
 func (bw BlockWacther)fecthParseBlock()  {
 	for {
 		select {
 		case <-bw.fecthTimer.C:
-			fmt.Println("开始同步区块")
+			log.Println("开始同步区块")
 			bw.fecthTimer.Stop()
 			bw._fecthParseBlock()
+
+			//bw.affirmChain <- "affirm!"
+			//bw.resendChain <- "resend!"
 			bw.fecthTimer.Reset(time.Second * config.TimeDelayInSecand)
 		}
 	}
@@ -97,6 +101,14 @@ func (bw BlockWacther)fecthParseBlock()  {
 func (bw BlockWacther) _fecthParseBlock() {
 	//获取最新的区块
 	ethLastNode := bw.fecthBlockByNumber("latest")
+
+	if bw.blockPool.ContainElement(ethLastNode) {
+		log.Printf("当前没有更新的区块")
+		return
+
+	}
+
+
 
 	var needFecthCount int64 = 0
 	if !bw.blockPool.IsEmpty() {
@@ -133,7 +145,6 @@ func (bw BlockWacther) putBlock2resendChain(info *blocknode.BlockNodeInfo)  {
 			}
 		}
 	}
-
 }
 
 //选出需要确认的交易
@@ -268,8 +279,8 @@ func (bw BlockWacther)parseBlock(blockInfo map[string]interface{}) string {
 			}
 
 			transHashs = transHashs + hash + ";"
-
 		}
+
 	}
 
 	return transHashs

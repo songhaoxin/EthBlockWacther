@@ -1,8 +1,8 @@
 package main
 
 import (
-	"clmwallet-block-wacther/wacther"
 	"fmt"
+	"clmwallet-block-wacther/wacther"
 )
 
 func main()  {
@@ -17,6 +17,15 @@ func main()  {
 	wacther := wacther.Init()
 	wacther.WacthStart()
 
+
+	//var nodes []blocknode.BlockNodeInfo
+	////db := mysqltools.GetInstance().GetMysqlDB()
+	////db.Find(&nodes)
+	//
+	//blocknode.Find(&nodes)
+	//for _,n := range nodes{
+	//	fmt.Println(n)
+	//}
 
 
 	fmt.Println("End")

@@ -25,4 +25,20 @@ type TransInterface interface {
 	// 根据交易Hash 重发交易
 	ResendTrans(transHash string)
 
+
+	// 返回平台中发出去(或者别人转给我们的）， --------> 如果收到的交易和发出去的交易分别设计表的话，需要操作两张表
+	// 但是还没有被确认的交易的信息
+	// 用于当监视服务挂掉后重启时，追溯需要确认的交易信息
+	// 返回的格式
+	// [
+	//  { "blockNumber":"xxxxxxxx",
+	//   "blockHash":"xxxxxx"
+	//   "transactions":"transHash1;transHash2;transHash3"                ------->一个区块中有多条交易时用";"分隔
+	//  }，
+	//  {....},
+	//  {....}
+	// ]
+	GetSendedTransInfo() []map[string]string
+
+
 }

@@ -60,3 +60,11 @@ func (info *BlockNodeInfo) Delete() error  {
 	}
 	return nil
 }
+
+func  Find(nodes *[]BlockNodeInfo) error  {
+	db := mysqltools.GetInstance().GetMysqlDB()
+	if err := db.Find(nodes).Error;err != nil {
+		return err
+	}
+	return nil
+}

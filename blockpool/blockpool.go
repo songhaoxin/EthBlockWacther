@@ -5,6 +5,7 @@ import (
 	"sync"
 	"clmwallet-block-wacther/config"
 	"strings"
+	"log"
 )
 
 type BlockPool struct {
@@ -29,9 +30,11 @@ func Init() *BlockPool {
 		pool:              make(map[int64] *blocknode.BlockNodeInfo),
 		lock:              new(sync.RWMutex),
 	}
-	return p
 
+	p.loadBlocksFromDB()
+	return p
 }
+
 
 func (b *BlockPool) IsEmpty() bool {
 	b.lock.RLock()
@@ -76,8 +79,15 @@ func (b *BlockPool) ContainElement(info *blocknode.BlockNodeInfo) bool {
 
 
 /// 从数据库中全量加载所有记录
-func (b *BlockPool) LoadBlocksFromDB()  {
-
+func (b *BlockPool) loadBlocksFromDB()  {
+	var nodes []blocknode.BlockNodeInfo
+	if err := blocknode.Find(&nodes);err != nil {
+		return
+	}
+	for _,n := range nodes {
+		var node blocknode.BlockNodeInfo = n
+		b.loadBlockFromDB(&node)
+	}
 }
 
 /// 从数据库中加载一条记录
@@ -153,11 +163,14 @@ func (b *BlockPool) ReciveBlock(node *blocknode.BlockNodeInfo) *blocknode.BlockN
 		}
 	} else {
 		b.size++
+		n = node
 	}
 
 	// 更新或增加元素
 	b.pool[k] = n
+	log.Printf("更新了池中数据")
 	node.Store()
+	log.Println("保存到了数据库中了")
 
 	return n
 }
@@ -176,6 +189,7 @@ func (b *BlockPool) LookBocks4AffirmTrans() []string {
 	affirmTransHashSlice := make([]string,0)
 
 	for k, v := range b.pool {
+
 		if b.endIdx-k+1 >= b.AffiremBlockHeigh {
 			tHashs := strings.Split(v.TransHash, ";")
 			for _,tHash := range tHashs {
@@ -183,7 +197,6 @@ func (b *BlockPool) LookBocks4AffirmTrans() []string {
 					affirmTransHashSlice = append(affirmTransHashSlice,tHash)
 				}
 			}
-
 		}
 	}
 
