@@ -17,6 +17,7 @@ type TransInterface interface {
 		blockNumber string,
 		fromAddress string,
 		toAddress string,
+		gas string,
 		value string)
 
 	//根据交易Hash 确认交易
@@ -38,7 +39,7 @@ type TransInterface interface {
 	//  {....},
 	//  {....}
 	// ]
-	GetSendedTransInfo() []map[string]string
+	GetUnHandledTransInfo() []map[string]string
 
 
 }

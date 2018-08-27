@@ -173,7 +173,7 @@ func (b *BlockPool) ReciveBlock(node *blocknode.BlockNodeInfo) *blocknode.BlockN
 	// 更新或增加元素
 	b.pool[k] = n
 	log.Printf("更新了池中数据")
-	node.Store()
+	node.Save()
 	log.Println("保存到了数据库中了")
 
 	return n

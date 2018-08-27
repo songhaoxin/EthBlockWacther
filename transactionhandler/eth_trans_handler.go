@@ -11,7 +11,7 @@ type EthTransactionHandler struct {
 }
 
 // 判断指定的 地址 是否属于平台内帐户
-func (t *EthTransactionHandler) ExistAddress(address string) bool {
+func (t EthTransactionHandler) ExistAddress(address string) bool {
 
 	req := HttpRequest.NewRequest()
 

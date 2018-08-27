@@ -258,7 +258,6 @@ func (bw BlockWacther)parseBlock(blockInfo map[string]interface{}) string {
 		return ""
 	}
 
-
 	// 保存本次区块中所包含的与本平台帐户相关的 '交易hash'
 	var transHashs string = ""
 
@@ -277,7 +276,7 @@ func (bw BlockWacther)parseBlock(blockInfo map[string]interface{}) string {
 		from := m["from"].(string)
 		to := m["to"].(string)
 		value := m["value"].(string)
-		//gas := m["gas"].(string)
+		gas := m["gas"].(string)
 		//gasPrice := m["gasPrice"].(string)
 		//input := m["input"].(string)
 
@@ -291,7 +290,7 @@ func (bw BlockWacther)parseBlock(blockInfo map[string]interface{}) string {
 
 			if bw.TransHandler.ExistAddress(to) {//别人向本平台帐户转帐
 				//根据交易Hash 增加blockNumber/blockHash到交易数据库表
-				bw.TransHandler.InsertReceiveTransInfo(hash,blockHash,blockNumber,from,to,value)
+				bw.TransHandler.InsertReceiveTransInfo(hash,blockHash,blockNumber,from,to,gas,value)
 			}
 
 			transHashs = transHashs + hash + ";"

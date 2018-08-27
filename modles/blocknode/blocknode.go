@@ -49,8 +49,31 @@ func (info *BlockNodeInfo)Exist() bool {
 
 	return true
 }
+
+/// 保存或更新数据
+func (info *BlockNodeInfo)Save() error  {
+	if info.Number < 0 {
+		return errors.New("区块号不能为负数")
+	}
+	if exist(info.Number) {
+		info.update()
+	} else {
+		info.store()
+	}
+
+	return nil
+}
+
+func exist(number int64) bool  {
+	var node = &BlockNodeInfo{}
+	db := mysqltools.GetInstance().GetMysqlDB()
+	db.First(node, number) // 查询number为number的node
+
+	return "" != node.Hash
+}
+
 /// 持久化到数据库
-func (info *BlockNodeInfo) Store()  error {
+func (info *BlockNodeInfo) store()  error {
 	db := mysqltools.GetInstance().GetMysqlDB()
 	if err := db.Create(info).Error;err != nil {
 		return err
@@ -59,7 +82,7 @@ func (info *BlockNodeInfo) Store()  error {
 }
 
 /// 更新到数据库
-func (info *BlockNodeInfo) Save() error  {
+func (info *BlockNodeInfo) update() error  {
 	db := mysqltools.GetInstance().GetMysqlDB()
 	if err := db.Save(info).Error;err != nil {
 		return err

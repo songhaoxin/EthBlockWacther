@@ -2,8 +2,7 @@ package main
 
 import (
 	"fmt"
-	"clmwallet-block-wacther/modles/blocknode"
-	"clmwallet-block-wacther/database/mysqltools"
+	"clmwallet-block-wacther/wacther"
 )
 
 func main()  {
@@ -38,8 +37,8 @@ func main()  {
 
 	//blocknode.FindAll()
 
-	//wacther := wacther.Init()
-	//wacther.WacthStart()
+	wacther := wacther.Init()
+	wacther.WacthStart()
 
 
 	//var nodes []blocknode.BlockNodeInfo
@@ -50,13 +49,15 @@ func main()  {
 	//for _,n := range nodes{
 	//	fmt.Println(n)
 	//}
+
+	/*
 	var node = &blocknode.BlockNodeInfo{}
 	db := mysqltools.GetInstance().GetMysqlDB()
-	db.First(node, 4) // 查询id为1的product
+	db.First(node, 11) // 查询id为1的product
 
 	fmt.Println(node.Number)
 	fmt.Println(node.Hash)
-
+	*/
 
 
 
