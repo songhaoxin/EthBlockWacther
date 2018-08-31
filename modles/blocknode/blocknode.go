@@ -4,7 +4,6 @@ import (
 	"clmwallet-block-wacther/database/mysqltools"
 	"errors"
 	"sync"
-	"log"
 )
 
 type BlockNodeInfo struct {
@@ -14,6 +13,8 @@ type BlockNodeInfo struct {
 	TransHash string
 	rwLock *sync.RWMutex `gorm:"-"`
 }
+
+
 
 func (BlockNodeInfo)  TableName() string	{
 	return "blockNodeInfo"
@@ -40,36 +41,48 @@ func (info *BlockNodeInfo) Equal(info1 *BlockNodeInfo) bool {
 	return info.Number == info1.Number && info.Hash == info1.Hash
 }
 
-func (info *BlockNodeInfo)Exist() bool {
-	db := mysqltools.GetInstance().GetMysqlDB()
-	if err := db.First(info).Error;nil != err {
-		log.Println(err)
-		return false
-	}
-
-	return true
-}
 
 /// 保存或更新数据
 func (info *BlockNodeInfo)Save() error  {
 	if info.Number < 0 {
 		return errors.New("区块号不能为负数")
 	}
-	if exist(info.Number) {
-		info.update()
-	} else {
+
+	//保存数据
+	if !info.exist() {
 		info.store()
+	} else {
+		info.update()
 	}
 
 	return nil
 }
 
-func exist(number int64) bool  {
+func (info *BlockNodeInfo) exist() bool  {
 	var node = &BlockNodeInfo{}
 	db := mysqltools.GetInstance().GetMysqlDB()
-	db.First(node, number) // 查询number为number的node
+	if err := db.First(node).Error;nil != err {
+		return false
+	}
+	return true
+}
 
-	return "" != node.Hash
+func (info *BlockNodeInfo) existByNumber() bool  {
+	var node = &BlockNodeInfo{}
+	db := mysqltools.GetInstance().GetMysqlDB()
+	if err := db.First(node).Error;nil != err {
+		return false
+	}
+	return node.Number == info.Number
+}
+
+func (info *BlockNodeInfo) existByNumberHash() bool  {
+	var node = &BlockNodeInfo{}
+	db := mysqltools.GetInstance().GetMysqlDB()
+	if err := db.First(node).Error;nil != err {
+		return false
+	}
+	return node.Number == info.Number && node.Hash == info.Hash
 }
 
 /// 持久化到数据库
@@ -83,6 +96,7 @@ func (info *BlockNodeInfo) store()  error {
 
 /// 更新到数据库
 func (info *BlockNodeInfo) update() error  {
+
 	db := mysqltools.GetInstance().GetMysqlDB()
 	if err := db.Save(info).Error;err != nil {
 		return err
@@ -91,9 +105,11 @@ func (info *BlockNodeInfo) update() error  {
 }
 
 /// 从数据库中删除信息
-func (info *BlockNodeInfo) Delete() error  {
+func (info *BlockNodeInfo) Delete()  error {
 
-	if 0 >= info.Number {
+	if !info.exist() { return nil}
+
+	if 0 > info.Number {
 		return errors.New("Primary key don't allow Empty.")
 	}
 

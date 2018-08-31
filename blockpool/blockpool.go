@@ -6,6 +6,7 @@ import (
 	"clmwallet-block-wacther/config"
 	"strings"
 	"log"
+	"strconv"
 )
 
 type BlockPool struct {
@@ -20,7 +21,7 @@ type BlockPool struct {
 }
 
 /// 创建 "BlockPool"实例
-func Init() *BlockPool {
+func Init2() *BlockPool {
 	p := &BlockPool{
 		startIdx:          -1,
 		endIdx:            -1,
@@ -126,9 +127,6 @@ func (b *BlockPool) loadBlockFromDB(node *blocknode.BlockNodeInfo)  {
 
 /// 从区块链中接收一个区块信息，并找出孤立的区块（如果存在）
 func (b *BlockPool) ReciveBlock(node *blocknode.BlockNodeInfo) *blocknode.BlockNodeInfo {
-	//if nil == node || nil == b.pool{
-	//	return nil
-	//}
 
 	if b.ContainElement(node) {
 		return nil
@@ -195,12 +193,18 @@ func (b *BlockPool) LookBocks4AffirmTrans() []string {
 	for k, v := range b.pool {
 
 		if b.endIdx-k+1 >= b.AffiremBlockHeigh {
+
+			msg := "block:" + strconv.FormatInt(v.Number,10) + " is affirmed!!!!!"
+			log.Println(msg)
+
 			tHashs := strings.Split(v.TransHash, ";")
 			for _,tHash := range tHashs {
 				if "" != tHash {
 					affirmTransHashSlice = append(affirmTransHashSlice,tHash)
 				}
 			}
+
+			//从池中删除这个区块
 		}
 	}
 
