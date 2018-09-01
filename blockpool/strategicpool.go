@@ -5,12 +5,13 @@
 @Software: 深圳超链科技
 */
 
+
 package blockpool
 
 import (
 	"clmwallet-block-wacther/modles/blocknode"
 	"sync"
-	"clmwallet-block-wacther/config"
+	"clmwallet-block-wacther/configs"
 	"log"
 	//"strconv"
 	"strings"
@@ -31,7 +32,7 @@ import (
 
 func Init() *StrategicPool {
 	p := &StrategicPool{
-		affiremHeigh:     config.AffiremBlockHeigh,
+		affiremHeigh:     configs.AffiremBlockHeigh,
 		latestIdx: -1,
 		size:             0,
 		earliestIdx:-1,
@@ -120,11 +121,16 @@ func (s *StrategicPool) ReciveBlockFromChain(node *blocknode.BlockNodeInfo) *blo
 		return nil
 	}
 
-	/* // 测试时临时注释
+	 // 测试时临时注释
 	if "" == node.TransHash {
 		log.Println("不包括本平台帐户的交易信息，跳过！")
 		return nil
+	}
+	/*
+	if node.Number % 2 == 0 {
+		return nil
 	}*/
+
 
 	s.lock.Lock()
 	defer s.lock.Unlock()
@@ -182,18 +188,16 @@ func (s *StrategicPool) LookSuccessedTransHashs() []string {
 	l := len(s.pool)
 
 	for i := 0;	i < l;   {
-		log.Println("处理确认区块...")
 		log.Println("当前区块最小号为：------",s.earliestIdx)
 		if s.latestIdx - s.earliestIdx >= int64(s.affiremHeigh) {
-
-			log.Println("当前区块最小号为：",s.earliestIdx)
-			log.Println("交易成功：",s.earliestIdx)
 
 			if v,ok := s.pool[s.earliestIdx];ok {
 				tHashs := strings.Split(v.TransHash, ";")
 				for _,tHash := range tHashs {
 					if "" != tHash {
 						affirmTransHashSlice = append(affirmTransHashSlice,tHash)
+						log.Println("交易成功的区块号：",s.earliestIdx)
+						log.Println("交易成功的区块HASH:",tHash)
 					}
 				}
 

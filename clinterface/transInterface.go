@@ -32,10 +32,10 @@ type TransInterface interface {
 		erc20Value string) error
 
 	//根据交易Hash 确认交易
-	NoticeTransAffirmed(transHash string)
+	NoticeTransAffirmed(transHash string) error
 
 	// 根据交易Hash 重发交易
-	NoticeTransFailed(transHash string)
+	NoticeTransFailed(transHash string) error
 
 
 	// 返回平台中发出去(或者别人转给我们的）， --------> 如果收到的交易和发出去的交易分别设计表的话，需要操作两张表

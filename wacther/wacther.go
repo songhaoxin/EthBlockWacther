@@ -6,7 +6,7 @@ import (
 	"clmwallet-block-wacther/modles/blocknode"
 	"github.com/ethereum/go-ethereum/rpc"
 	"clmwallet-block-wacther/clinterface"
-	"clmwallet-block-wacther/config"
+	"clmwallet-block-wacther/configs"
 	"strconv"
 	"strings"
 	"sync"
@@ -53,7 +53,7 @@ func Init() *BlockWacther {
 		blockPool:          blockpool.Init(),
 		succeedBlocksChain: make(chan string,1000),
 		failedBlocksChain:  make(chan string,1000),
-		fecthTimer:         time.NewTimer(config.TimeDelayInSecand * time.Second),
+		fecthTimer:         time.NewTimer(configs.TimeDelayInSecand * time.Second),
 	}
 
 	b.TransHandler = transactionhandler.Init()
@@ -90,8 +90,8 @@ func (bw BlockWacther) HandleSuccessedTrans()  {
 	}
 	for {
 		for th := range bw.succeedBlocksChain {
-			log.Println("处理已经确认的交易:",th)
 			if  nil != bw.TransHandler {
+				log.Println("发了成功短信的交易HASH:",th)
 				bw.TransHandler.NoticeTransAffirmed(th)
 			}
 		}
@@ -103,8 +103,9 @@ func (bw BlockWacther) HandleFailedTrans()  {
 	if nil == bw.failedBlocksChain {return }
 	for {
 		for th := range bw.failedBlocksChain {
-			log.Println("处理需要重新打包的交易:",th)
+
 			if nil != bw.TransHandler {
+				log.Println("发了失败短信的交易HASH:",th)
 				bw.TransHandler.NoticeTransFailed(th)
 			}
 		}
@@ -118,13 +119,13 @@ func (bw BlockWacther) FecthParseBlockFromServerTimes()  {
 	for {
 		select {
 		case <-bw.fecthTimer.C:
-			log.Println("开始同步区块")
+			//log.Println("开始同步区块")
 			bw.fecthTimer.Stop()
 			bw._fecthParseBlock()
 
 			//bw.succeedBlocksChain <- "affirm!"
 			//bw.failedBlocksChain <- "resend!"
-			bw.fecthTimer.Reset(time.Second * config.TimeDelayInSecand)
+			bw.fecthTimer.Reset(time.Second * configs.TimeDelayInSecand)
 		}
 	}
 }
@@ -138,12 +139,12 @@ func (bw BlockWacther) _fecthParseBlock() {
 	//获取最新的区块
 	ethLastNode := bw.FecthBlockByNumber("latest")
 	
-	if ethLastNode.Number < 0 || "" == ethLastNode.Hash {
+	if nil == ethLastNode || ethLastNode.Number < 0 || "" == ethLastNode.Hash {
 		return 
 	}
 
 	if bw.blockPool.ContainElement(ethLastNode) {
-		log.Printf("当前没有更新的区块")
+		//log.Printf("当前没有更新的区块")
 		return
 	}
 
@@ -163,16 +164,15 @@ func (bw BlockWacther) _fecthParseBlock() {
 	node := ethLastNode
 	hash := node.ParentHash
 	for ; fecthCount < needFecthCount;fecthCount++  {
+
 		hashValueNuber,_ :=  strconv.ParseInt(hash,0,64)
-		if hashValueNuber <= 0 {
-			break
-		} else {
-			node = bw.fecthBlockByHash(hash)
-			hash = node.ParentHash
-		}
+		if hashValueNuber <= 0 {break}
+
+		node = bw.fecthBlockByHash(hash)
+		if nil == node {break}
+		hash = node.ParentHash
 		//筛掉失败的区块交易
 		bw.ReceiveBlocksFilterFailed(node)
-
 	}
 
 	// 选出已经确认的交易
@@ -185,13 +185,20 @@ func (bw BlockWacther) ReceiveBlocksFilterFailed(info *blocknode.BlockNodeInfo) 
 	if nil == info {return }
 
 	node := bw.blockPool.ReciveBlockFromChain(info)
-	if nil == node || "" == node.TransHash {return }
+	if nil == node {return }
+
+
+
+	if "" == node.TransHash {return }
 
 	tHashs := strings.Split(node.TransHash, ";")
+
 	for _,tH := range tHashs {
 		if "" != tH {
 			if nil != bw.failedBlocksChain {
 				bw.failedBlocksChain <- tH
+				log.Println("往chain中发送失败的交易,区块号:",node.Number)
+				log.Println("往chain中发送失败的交易,区块HASH:",tH)
 			}
 		}
 	}
@@ -202,10 +209,13 @@ func (bw BlockWacther) HandleBlocksSuccessed()  {
 
 	txHashs := bw.blockPool.LookSuccessedTransHashs()
 
+
 	for _,txHash := range txHashs {
 		if "" != txHash {
 			if nil != bw.succeedBlocksChain {
 				bw.succeedBlocksChain <- txHash
+				log.Println("发送成功交易HASH:%s",txHashs)
+
 			}
 		}
 	}
@@ -257,11 +267,13 @@ func (bw BlockWacther) fecthBlockByHash(blockHash string) *blocknode.BlockNodeIn
 
 	client,err := bw.getClient()
 	if nil != err {
+		log.Println(err)
 		return nil
 	}
 
 	var blockInfo = make(map[string]interface{})
-	if err := client.Call(&blockInfo,"eth_getBlockByHash",blockHash,"true");err != nil {
+	if err := client.Call(&blockInfo,"eth_getBlockByHash",blockHash,true);err != nil {
+		log.Println(err)
 		return nil
 	}
 
@@ -295,7 +307,7 @@ func (bw BlockWacther) fecthBlockByHash(blockHash string) *blocknode.BlockNodeIn
 func (bw BlockWacther) getClient() (client *rpc.Client,err error) {
 	err = nil
 	if nil == bw.client{
-		bw.client,err = rpc.Dial(config.GethHost)
+		bw.client,err = rpc.Dial(configs.GethHost)
 	}
 	return bw.client,err
 }
@@ -308,14 +320,14 @@ func (bw BlockWacther)parseBlock(blockInfo map[string]interface{}) string {
 	transInfoI := blockInfo["transactions"]
 	if nil == transInfoI {return ""}
 
-	//transInfo,ok := transInfoI.([]interface{})
-	//if !ok {
-	//	return ""
-	//}
+	transInfo,ok := transInfoI.([]interface{})
+	if !ok {
+		return ""
+	}
 
 	// 保存本次区块中所包含的与本平台帐户相关的 '交易hash'
 	var transHashs string = ""
-	/*
+
 		//	解析每一个交易
 		for _,mI := range transInfo {
 			m,ok := mI.(map[string]interface {})
@@ -348,9 +360,15 @@ func (bw BlockWacther)parseBlock(blockInfo map[string]interface{}) string {
 
 			// 先判断发出的交易，对于发出的交易的，只按发出的地址进行确认
 			if bw.TransHandler.ExistAddress(from) { //是我们发出的交易
+				log.Println("是我们平台发出的交易：",hash)
 				// 对已经发出去的交易，填充好区块号及区块Hash
 				transHashs = transHashs + hash + ";"
-				bw.TransHandler.AddBlockNumberHash(blockNumber,blockHash,hash)
+				if nil == bw.TransHandler.AddBlockNumberHash(blockNumber,blockHash,hash) {
+					log.Println("填充交易的blockNumber 和 blockHash 成功")
+				} else {
+					log.Println("填充交易的blockNumber 和 blockHash 失败")
+				}
+
 				// 对于我们发出去的交易，只以保存一条记录到数据表中，所以直接解析下一条
 				continue
 			}
@@ -365,19 +383,25 @@ func (bw BlockWacther)parseBlock(blockInfo map[string]interface{}) string {
 
 				//根据交易Hash 增加blockNumber/blockHash到交易数据库表
 				if bw.TransHandler.ExistAddress(erc20to) { //给本平台帐户发送ERC20代币
+					log.Println("收到别人发给我们代币交易：",hash)
 					transHashs = transHashs + hash + ";"
-					bw.TransHandler.InsertReceivedERC20CoinInfo(hash,blockHash,blockNumber,from,erc20to,to,gas,erc20Value)
+					if nil == bw.TransHandler.InsertReceivedERC20CoinInfo(hash,blockHash,blockNumber,from,erc20to,to,gas,erc20Value) {
+						log.Println("保存 接收 代币 交易信息 成功")
+					}
 				}
 			} else if isEthTransf(value) {
 				//根据交易Hash 增加blockNumber/blockHash到交易数据库表
 				if bw.TransHandler.ExistAddress(to) {
+					log.Println("收到别人发给我们的以太币交易：",hash)
 					transHashs = transHashs + hash + ";"
-					bw.TransHandler.InsertReceivedTransInfo(hash,blockHash,blockNumber,from,to,gas,value)
+					if nil == bw.TransHandler.InsertReceivedTransInfo(hash,blockHash,blockNumber,from,to,gas,value) {
+						log.Println("保存 接收 以太币 交易信息 成功")
+					}
 				}
 			}
 
 	}
-*/
+
 
 	return transHashs
 }

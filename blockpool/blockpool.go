@@ -1,14 +1,6 @@
 package blockpool
 
-import (
-	"clmwallet-block-wacther/modles/blocknode"
-	"sync"
-	"clmwallet-block-wacther/config"
-	"strings"
-	"log"
-	"strconv"
-)
-
+/*
 type BlockPool struct {
 	MaxSizeAllowed    int64 //允许的区块最大数量
 	AffiremBlockHeigh int64 //用以确认区块，离最新区块的标准高度
@@ -239,3 +231,4 @@ func (b *BlockPool) removeElementAtStart() {
 	}
 	b.size--
 }
+*/
