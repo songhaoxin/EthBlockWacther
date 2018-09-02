@@ -7,10 +7,30 @@
 
 package blockpool
 
-import "testing"
+import (
+	"testing"
+	"database/sql"
+	"fmt"
+)
 
 
 func TestResetEarliestIdx(t *testing.T)  {
 
+	db, err := sql.Open("mysql","root:root@tcp(120.77.223.246:3306)/clwallet")
+	if nil != err {
+		return
+	}
+
+	rows,err := db.Query("SELECT 1 FROM blockNodeInfo WHERE number=60 LIMIT 1")
+	if nil != err {
+		return
+	}
+
+	for rows.Next() {
+		columns,_ := rows.Columns()
+		fmt.Println(columns)
+	}
+
+	db.Close()
 
 }

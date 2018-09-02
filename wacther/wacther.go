@@ -209,7 +209,6 @@ func (bw BlockWacther) HandleBlocksSuccessed()  {
 
 	txHashs := bw.blockPool.LookSuccessedTransHashs()
 
-
 	for _,txHash := range txHashs {
 		if "" != txHash {
 			if nil != bw.succeedBlocksChain {

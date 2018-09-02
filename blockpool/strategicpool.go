@@ -13,9 +13,10 @@ import (
 	"sync"
 	"clmwallet-block-wacther/configs"
 	"log"
-	//"strconv"
-	"strings"
+	"github.com/ethereum/go-ethereum/metrics"
 	"fmt"
+	"sort"
+	"strings"
 )
 
 
@@ -95,22 +96,6 @@ func (s *StrategicPool) Save2Db()  {
 	log.Println("保存数据成功！")
 }
 
-func (s *StrategicPool) RemoveItem(node *blocknode.BlockNodeInfo)  {
-	if nil == node {return }
-
-	s.lock.Lock()
-	defer s.lock.Unlock()
-
-	if 0 == s.size {
-		return
-	}
-	//从池中删除这个区块
-	delete(s.pool,node.Number)
-	s.ResetEarliestIdx()
-
-	s.size--
-}
-
 
 
 /// 从区块链中接收一个区块信息，并找出孤立的区块（如果存在）
@@ -126,11 +111,6 @@ func (s *StrategicPool) ReciveBlockFromChain(node *blocknode.BlockNodeInfo) *blo
 		log.Println("不包括本平台帐户的交易信息，跳过！")
 		return nil
 	}
-	/*
-	if node.Number % 2 == 0 {
-		return nil
-	}*/
-
 
 	s.lock.Lock()
 	defer s.lock.Unlock()
@@ -185,57 +165,33 @@ func (s *StrategicPool) LookSuccessedTransHashs() []string {
 
 	affirmTransHashSlice := make([]string,0)
 
-	l := len(s.pool)
+	var keys metrics.Int64Slice
+	for k := range s.pool {
+		keys = append(keys, k)
+	}
+	sort.Sort(keys)
 
-	for i := 0;	i < l;   {
-		log.Println("当前区块最小号为：------",s.earliestIdx)
-		if s.latestIdx - s.earliestIdx >= int64(s.affiremHeigh) {
-
-			if v,ok := s.pool[s.earliestIdx];ok {
-				tHashs := strings.Split(v.TransHash, ";")
-				for _,tHash := range tHashs {
-					if "" != tHash {
-						affirmTransHashSlice = append(affirmTransHashSlice,tHash)
-						log.Println("交易成功的区块号：",s.earliestIdx)
-						log.Println("交易成功的区块HASH:",tHash)
-					}
+	for _, k := range keys {
+		v,ok := s.pool[k]
+		if ok {
+			tHashs := strings.Split(v.TransHash, ";")
+			for _,tHash := range tHashs {
+				if "" != tHash {
+					affirmTransHashSlice = append(affirmTransHashSlice,tHash)
+					log.Println("交易成功的区块号：",s.earliestIdx)
+					log.Println("交易成功的区块HASH:",tHash)
 				}
-
-				//从池中删除这个区块
-				delete(s.pool,v.Number)
-				v.Delete()
-
-				i++
 			}
-		} else {
-			break
-		}
-		s.ResetEarliestIdx()
 
+			//从池中删除这个区块
+			delete(s.pool,v.Number)
+			v.Delete()
+
+		}
 	}
 
 
 	return  affirmTransHashSlice
-}
-
-func (s *StrategicPool) ResetEarliestIdx() {
-
-	if 0 == s.size {
-		s.earliestIdx = -1
-	}
-
-	var eIdx int64 = -1
-	for k,_ := range s.pool {
-		if -1 == eIdx {
-			eIdx = k
-			continue
-		}
-		if k < eIdx {
-			eIdx = k
-		}
-	}
-
-	s.earliestIdx = eIdx
 }
 
 
@@ -244,6 +200,8 @@ func (s *StrategicPool) Size() int {
 	defer s.lock.RUnlock()
 	return s.size
 }
+
+
 
 func (s *StrategicPool) ContainElement(info *blocknode.BlockNodeInfo) bool {
 	s.lock.RLock()

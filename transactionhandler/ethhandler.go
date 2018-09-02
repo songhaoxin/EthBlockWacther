@@ -6,6 +6,10 @@ import (
 	"encoding/json"
 	"clmwallet-block-wacther/configs"
 	"errors"
+
+	_"github.com/go-sql-driver/mysql"
+	"database/sql"
+	"fmt"
 )
 
 type EthTransactionHandler struct {
@@ -358,3 +362,21 @@ func (t EthTransactionHandler) GetUnHandledTransInfo() []map[string]string {
 	log.Println(res,err)
 	return nil
 }
+
+func query()  {
+	db, err := sql.Open("mysql","root:root@tcp(120.77.223.246:3306)/clwallet")
+	if nil != err {
+		return
+	}
+
+	rows,err := db.Query("SELECT * FROM blockNodeInfo")
+	if nil != err {
+		return
+	}
+	for rows.Next() {
+		columns,_ := rows.Columns()
+		fmt.Println(columns)
+	}
+}
+
+
