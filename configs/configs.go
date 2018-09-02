@@ -10,8 +10,8 @@ package configs
 
 
 // geth结点地址
-//const GethHost  = "http://localhost:7545"
-const GethHost  = "http://192.168.50.167:7545"
+const GethHost  = "http://localhost:7545"
+//const GethHost  = "http://192.168.50.167:7545"
 //const GethHost  = "https://ropsten.infura.io/v3/70905704824a4e66888eda02d084c49d"
 
 // 管理平台服务地址
