@@ -52,7 +52,7 @@ type TransInterface interface {
 	// ]
 	//
 	//包括所以太坊币交易和ERC20代币交易
-	GetUnHandledTransInfo() []map[string]string
+	//GetUnHandledTransInfo() []map[string]string
 
 
 }

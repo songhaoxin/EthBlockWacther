@@ -10,6 +10,7 @@ package transactionhandler
 import (
 	"testing"
 	"log"
+	"fmt"
 )
 
 var hdl *EthTransactionHandler  = Init()
@@ -20,10 +21,10 @@ func TestExistAddress(t *testing.T)  {
 		isExist bool
 	}{
 		// 本平台
-		{"0x0091f3cdf24c393f20739acd499b76db891fcfee",true},
+		{"0x8fCC75bB4D90082D6EB3Aa9Da0d14DAbD538d34f",true},
 
 		//不是本平台
-		{"0x0091f3cdf24c393f20739acd499b76db891fc123",false},
+		{"0x2DEF2400a4cC1aB21bfb6472B54A00643740E109",false},
 	}
 	for _,tt := range tcase{
 		actual := hdl.ExistAddress(tt.address)
@@ -41,7 +42,7 @@ func TestExistTransByHash(t *testing.T)  {
 		isExist bool
 	}{
 		// 本平台
-		{hash:"0x4dd0e3092ee7f397ac54975cfe7de374ae1eae124be131b45a9d9803ee03b4e5", isExist:true},
+		{hash:"0xa50a59ae8d4fcf672d0034d31cdaff48710b6bb5cac60c844693435b52f9dab2", isExist:true},
 		// 不是本平台
 		{"0x0091f3cdf24c393f20739acd499b76db891f1235",false},
 	}
@@ -63,7 +64,7 @@ func TestAddBlockNumberHash(t *testing.T)  {
 		err error
 	} {
 		{
-			"111","xxx","0x9ea09a4da583347351b5cfb91350ad4f875645a944f596d181f973eb2f47942b",error(nil),
+			"88888","hhhhhhhhhhsfsfsf","0x0ac50ee9ce8075be56aea8c893bdabaa96ec7f0c4345bdace93101ce75b4bd80",error(nil),
 		},
 		/*
 		{
@@ -128,7 +129,7 @@ func TestInsertReceivedERC20CoinInfo(t *testing.T)  {
 	} {
 		//成功的情况的测试用例
 		{
-			"1","12","32","23","32","3234","232","23",nil,
+			"1999","12","32","23","32","代币的智能合约地址","232","23",nil,
 		},
 		/*
 		//失败时候的测试用例
@@ -155,7 +156,7 @@ func TestNoticeTransAffirmed(t *testing.T)  {
 		err error
 	} {
 		// 应该成功的测试用例
-		{"0x087e1ea3cc208df6c72f727a015a18255e45927b",nil},
+		{"0x0ac50ee9ce8075be56aea8c893bdabaa96ec7f0c4345bdace93101ce75b4bd80",nil},
 	}
 
 	for _,tt := range tcase{
@@ -174,7 +175,7 @@ func TestNoticeTransFailed(t *testing.T)  {
 		err error
 	} {
 		// 应该成功的测试用例
-		{"0x087e1ea3cc208df6c72f727a015a18255e45927b",nil},
+		{"0x0ac50ee9ce8075be56aea8c893bdabaa96ec7f0c4345bdace93101ce75b4bd80",nil},
 	}
 
 	for _,tt := range tcase{
@@ -187,3 +188,21 @@ func TestNoticeTransFailed(t *testing.T)  {
 
 }
 
+func TestEthTransactionHandler_UpdateTransState(t *testing.T) {
+	err := hdl.UpdateTransState("0x0ac50ee9ce8075be56aea8c893bdabaa96ec7f0c4345bdace93101ce75b4bd80")
+	if nil != err {
+		log.Println(err)
+	}
+}
+
+
+func TestEthTransactionHandler_GetTransMainInfoes(t *testing.T) {
+	f,to,a,con,e := hdl.GetTransMainInfo("0x0ac50ee9ce8075be56aea8c893bdabaa96ec7f0c4345bdace93101ce75b4bd80")
+
+	fmt.Println(f,to,a,con,e)
+}
+
+func TestEthTransactionHandler_GetCoinType(t *testing.T) {
+	smbl,dec,err := hdl.GetCoinInfo("aaaaaaaaa")
+	fmt.Println(smbl,dec,err)
+}

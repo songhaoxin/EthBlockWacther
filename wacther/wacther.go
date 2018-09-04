@@ -13,6 +13,7 @@ import (
 	"time"
 	"log"
 	"clmwallet-block-wacther/transactionhandler"
+	"clmwallet-block-wacther/helper"
 )
 
 
@@ -334,17 +335,44 @@ func (bw BlockWacther)parseBlock(blockInfo map[string]interface{}) string {
 				break
 			}
 
+			/////=============解析区块信息=======开始============
 			blockHash := m["blockHash"].(string)
 			blockNumber := m["blockNumber"].(string)
+
 			//transactionIndex := m["transactionIndex"].(string)
 			hash := m["hash"].(string)
+
 			//nonce := m["nonce"].(string)
 			from := m["from"].(string)
-			to := m["to"].(string)
-			value := m["value"].(string)
-			gas := m["gas"].(string)
+
+			//to := m["to"].(string)
+
+			to,ok := m["to"].(string)
+			if !ok {
+				to = ""
+			}
+
+			//value := m["value"].(string)
+			value,ok := m["value"].(string)
+			if !ok {
+				value = ""
+			}
+
+			//gas := m["gas"].(string)
+			gas,ok := m["gas"].(string)
+			if !ok {
+				gas = ""
+			}
+
 			//gasPrice := m["gasPrice"].(string)
-			input := m["input"].(string)
+
+
+			//input := m["input"].(string)
+			input,ok := m["input"].(string)
+			if !ok {
+				input = ""
+			}
+			/////=============解析区块信息=======结束============
 
 
 			// 如果没有 交易处理 的代理直接返回
@@ -365,13 +393,12 @@ func (bw BlockWacther)parseBlock(blockInfo map[string]interface{}) string {
 				if nil == bw.TransHandler.AddBlockNumberHash(blockNumber,blockHash,hash) {
 					log.Println("填充交易的blockNumber 和 blockHash 成功")
 				} else {
-					log.Println("填充交易的blockNumber 和 blockHash 失败")
+					log.Println("填充交易的blockNumber 和 blockHash 失败！！！！！！")
 				}
 
 				// 对于我们发出去的交易，只以保存一条记录到数据表中，所以直接解析下一条
 				continue
 			}
-
 
 
 			//再判断是不是别人发给我们的交易
@@ -386,6 +413,8 @@ func (bw BlockWacther)parseBlock(blockInfo map[string]interface{}) string {
 					transHashs = transHashs + hash + ";"
 					if nil == bw.TransHandler.InsertReceivedERC20CoinInfo(hash,blockHash,blockNumber,from,erc20to,to,gas,erc20Value) {
 						log.Println("保存 接收 代币 交易信息 成功")
+					} else {
+						log.Println("保存 接收 代币 交易信息 失败！！！！！！！")
 					}
 				}
 			} else if isEthTransf(value) {
@@ -395,12 +424,13 @@ func (bw BlockWacther)parseBlock(blockInfo map[string]interface{}) string {
 					transHashs = transHashs + hash + ";"
 					if nil == bw.TransHandler.InsertReceivedTransInfo(hash,blockHash,blockNumber,from,to,gas,value) {
 						log.Println("保存 接收 以太币 交易信息 成功")
+					} else {
+						log.Println("保存 接收 以太币 交易信息 失败！！！！！！")
 					}
 				}
 			}
 
 	}
-
 
 	return transHashs
 }
@@ -415,11 +445,19 @@ func (bw BlockWacther)parseBlock(blockInfo map[string]interface{}) string {
 
 // 是否是ERC20代币交易
 func isERC20Transf(value string,input string)  bool  {
-	return (value == "0x0")  && (substr(input,0,10) == "0xa9059cbb")
+	if "" == input {
+		return false
+	}
+
+	return (value == "0x0")  && (helper.Substr(input,0,10) == "0xa9059cbb")
 }
 
 // 是否是以太币交易
 func isEthTransf(value string) bool {
+	if "" == value {
+		return false
+	}
+
 	valueNum,err :=  strconv.ParseInt(value,0,64)
 	if nil != err {
 		return false
@@ -436,7 +474,7 @@ func erc20ToAddress(input string) string  {
 	if 138 != len(input) {
 		return ""
 	}
-	address := "0x" + substr(input,34,40)
+	address := "0x" + helper.Substr(input,34,40)
 	return address
 }
 
@@ -445,55 +483,7 @@ func erc20Value(input string) string  {
 	if 138 != len(input) {
 		return ""
 	}
-	value := substr2(input,74,137)
+	value := helper.Substr2(input,74,137)
 	return value
 }
-
-//截取字符串 start 起点下标 length 需要截取的长度
-func substr(str string, start int, length int) string {
-	rs := []rune(str)
-	rl := len(rs)
-	end := 0
-
-	if start < 0 {
-		start = rl - 1 + start
-	}
-	end = start + length
-
-	if start > end {
-		start, end = end, start
-	}
-
-	if start < 0 {
-		start = 0
-	}
-	if start > rl {
-		start = rl
-	}
-	if end < 0 {
-		end = 0
-	}
-	if end > rl {
-		end = rl
-	}
-
-	return string(rs[start:end])
-}
-
-//截取字符串 start 起点下标 end 终点下标(不包括)
-func substr2(str string, start int, end int) string {
-	rs := []rune(str)
-	length := len(rs)
-
-	if start < 0 || start > length {
-		panic("start is wrong")
-	}
-
-	if end < 0 || end > length {
-		panic("end is wrong")
-	}
-
-	return string(rs[start:end])
-}
-
 
