@@ -9,28 +9,75 @@ package blockpool
 
 import (
 	"testing"
-	"database/sql"
+	"sort"
+	"strings"
+	"log"
+	"github.com/ethereum/go-ethereum/metrics"
 	"fmt"
 )
 
+func TestStrategicPool_GetEarliestIdx(t *testing.T) {
+	s := Init()
+	fmt.Println(s.GetEarliestIdx())
+	fmt.Println(s.Size())
+	//fmt.Println(s.GetAffiremHeigh())
 
+	fmt.Println("---------------------")
+
+	//v,_ := s.pool[1]
+	//v.Delete()
+
+	delete(s.pool,1)
+
+	delete(s.pool,59)
+	delete(s.pool,60)
+	fmt.Println(s.GetEarliestIdx())
+	fmt.Println(s.Size())
+
+
+}
 func TestResetEarliestIdx(t *testing.T)  {
 
-	db, err := sql.Open("mysql","root:root@tcp(120.77.223.246:3306)/clwallet")
-	if nil != err {
-		return
-	}
+	s := Init()
 
-	rows,err := db.Query("SELECT 1 FROM blockNodeInfo WHERE number=60 LIMIT 1")
-	if nil != err {
-		return
-	}
+	s.lock.Lock()
+	defer s.lock.Unlock()
 
-	for rows.Next() {
-		columns,_ := rows.Columns()
-		fmt.Println(columns)
-	}
+	if 0 == s.size {return }
 
-	db.Close()
+	affirmTransHashSlice := make([]string,0)
+	var keys metrics.Int64Slice
+	for k := range s.pool {
+		keys = append(keys, k)
+	}
+	sort.Sort(keys)
+
+	var k int64
+
+
+	s.latestIdx = 4
+	for _, k = range keys {
+		fmt.Println(s.latestIdx)
+		if s.latestIdx - k < int64(s.affiremHeigh) {
+			continue
+		}
+
+		v,ok := s.pool[k]
+		if ok {
+			tHashs := strings.Split(v.TransHash, ";")
+			for _,tHash := range tHashs {
+				if "" != tHash {
+					affirmTransHashSlice = append(affirmTransHashSlice,tHash)
+					log.Println("交易成功的区块号：",v.Number)
+					log.Println("交易成功的区块HASH:",tHash)
+				}
+			}
+
+			//从池中删除这个区块
+			delete(s.pool,v.Number)
+			//v.Delete()
+
+		}
+	}
 
 }

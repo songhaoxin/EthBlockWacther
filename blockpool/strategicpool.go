@@ -23,7 +23,7 @@ import (
 
  type StrategicPool struct {
  	affiremHeigh     int64 					// 用以确认区块的高度
- 	earliestIdx		int64
+ 	//earliestIdx		int64
  	latestIdx           int64 						// 拉取的最新区块号
  	size             int
  	pool map[int64] *blocknode.BlockNodeInfo
@@ -36,7 +36,7 @@ func Init() *StrategicPool {
 		affiremHeigh:     configs.AffiremBlockHeigh,
 		latestIdx: -1,
 		size:             0,
-		earliestIdx:-1,
+		//earliestIdx:-1,
 		pool:make(map[int64] *blocknode.BlockNodeInfo),
 		lock:new(sync.RWMutex),
 	}
@@ -59,8 +59,6 @@ func (s *StrategicPool) LoadBlocksFromDB()  {
 }
 
 
-
-
 func (s *StrategicPool)InsertElement(node *blocknode.BlockNodeInfo)  {
 	if s.ContainElement(node) { return }
 
@@ -70,15 +68,8 @@ func (s *StrategicPool)InsertElement(node *blocknode.BlockNodeInfo)  {
 	k,v := node.Number,node
 
 	if k < 0 {
-		log.Println("区块号出现负数，忽略该区块")
+		log.Println("非法区块号（负数），忽略该区块")
 		return
-	}
-
-	// 更新startIdx 与 endIdx
-	if 0 == s.size {
-		s.earliestIdx = k
-	} else if k < s.earliestIdx {
-		s.earliestIdx = k
 	}
 
 	s.pool[k] = v
@@ -101,6 +92,7 @@ func (s *StrategicPool) Save2Db()  {
 /// 从区块链中接收一个区块信息，并找出孤立的区块（如果存在）
 func (s *StrategicPool) ReciveBlockFromChain(node *blocknode.BlockNodeInfo) *blocknode.BlockNodeInfo {
 
+	fmt.Println(node.Number)
 	if s.ContainElement(node) {
 		log.Println("本地已经存在该区块，跳过！")
 		return nil
@@ -121,13 +113,6 @@ func (s *StrategicPool) ReciveBlockFromChain(node *blocknode.BlockNodeInfo) *blo
 	if k < 0  {
 		log.Println("区块号出现负数，忽略该区块!")
 		return nil
-	}
-
-	// 更新startIdx 与 endIdx
-	if 0 == s.size {
-		s.earliestIdx = k
-	} else if k < s.earliestIdx {
-		s.earliestIdx = k
 	}
 
 	var n *blocknode.BlockNodeInfo = nil
@@ -161,7 +146,11 @@ func (s *StrategicPool) LookSuccessedTransHashs() []string {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
-	if 0 == s.size {return nil}
+	log.Println("Begin scan block for suceess 1...")
+
+	if 0 == s.size || s.latestIdx < 0 {return nil}
+
+	log.Println("Begin scan block for suceess 2...")
 
 	affirmTransHashSlice := make([]string,0)
 
@@ -171,22 +160,28 @@ func (s *StrategicPool) LookSuccessedTransHashs() []string {
 	}
 	sort.Sort(keys)
 
-	for _, k := range keys {
+	var k int64
+	for _, k = range keys {
+
+		if s.latestIdx - k < int64(s.affiremHeigh) {
+			continue
+		}
+
 		v,ok := s.pool[k]
 		if ok {
 			tHashs := strings.Split(v.TransHash, ";")
 			for _,tHash := range tHashs {
 				if "" != tHash {
 					affirmTransHashSlice = append(affirmTransHashSlice,tHash)
-					log.Println("交易成功的区块号：",s.earliestIdx)
+					log.Println("交易成功的区块号：",v.Number)
 					log.Println("交易成功的区块HASH:",tHash)
 				}
 			}
 
 			//从池中删除这个区块
 			delete(s.pool,v.Number)
+			s.size--
 			v.Delete()
-
 		}
 	}
 
@@ -231,11 +226,24 @@ func (s *StrategicPool)Descrip()  {
 	}
 }
 
+
 func (s *StrategicPool) GetEarliestIdx() int64 {
 	s.lock.RLock()
 	defer s.lock.RUnlock()
-	return s.earliestIdx
+
+	if 0 == s.size {
+		return -1
+	}
+
+	var keys metrics.Int64Slice
+	for k := range s.pool {
+		keys = append(keys, k)
+	}
+	sort.Sort(keys)
+
+	return keys[0]
 }
+
 
 func (s *StrategicPool) GetAffiremHeigh()  int64{
 	s.lock.RLock()

@@ -1,13 +1,15 @@
 package transactionhandler
 
 import (
-	"github.com/kirinlabs/HttpRequest"
 	"log"
 	"clmwallet-block-wacther/configs"
 	"errors"
 
 	"database/sql"
 	_"github.com/go-sql-driver/mysql"
+	"fmt"
+	"strings"
+	"github.com/kirinlabs/HttpRequest"
 	"clmwallet-block-wacther/helper"
 	"encoding/json"
 )
@@ -47,32 +49,59 @@ func (e EthTransactionHandler) getMySqlDb() *sql.DB  {
 // 判断指定的 地址 是否属于平台内帐户
 func (t EthTransactionHandler) ExistAddress(address string) bool {
 
-	db := t.getMySqlDb()
-	if nil == db {
+	//db := t.getMySqlDb()
+	//if nil == db {
+	//	return false
+	//}
+
+	db,err := sql.Open("mysql",configs.ServerDBConnectString)
+	if nil != err {
 		return false
 	}
+	defer db.Close()
 
 	var address2 string
+	/*
 	err := db.QueryRow("SELECT address FROM coin_address WHERE address=?",address).Scan(&address2)
 	if nil != err {
+		log.Println(err,"ExistAddress")
+		return false
+	}*/
+	rows,err := db.Query("SELECT address FROM coin_address WHERE address=?",address)
+	defer rows.Close()
+
+	if err != nil {
 		log.Println(err)
 		return false
 	}
 
-	return true
+	var exsit = false
+	for rows.Next() {
+		rows.Scan(&address2)
+		fmt.Println("结果",address2)
+		exsit = true
+	}
+
+	return exsit
 
 }
 
 func (t EthTransactionHandler) ExistTransByHash(transHash string) bool {
-	db := t.getMySqlDb()
-	if nil == db {
+	//db := t.getMySqlDb()
+	//if nil == db {
+	//	return false
+	//}
+
+	db,err := sql.Open("mysql",configs.ServerDBConnectString)
+	if nil != err {
 		return false
 	}
+	defer db.Close()
 
 	var transHash2 string
-	err := db.QueryRow("SELECT tx_hash FROM send_out_detail WHERE tx_hash=?",transHash).Scan(&transHash2)
+	err = db.QueryRow("SELECT tx_hash FROM send_out_detail WHERE tx_hash=?",transHash).Scan(&transHash2)
 	if nil != err {
-		log.Println(err)
+		log.Println(err,"ExistTransByHash")
 		return false
 	}
 
@@ -124,11 +153,11 @@ func (t EthTransactionHandler)InsertReceivedTransInfo(
 		return errors.New("Can not conect to DB Server")
 	}
 
-	stmt,_ := db.Prepare("INSERT INTO send_out_detail (tx_hash,block_hash,block_number,from_address,to_address,gas,to_amount) VALUES (?,?,?,?,?,?,?)")
+	stmt,_ := db.Prepare("INSERT INTO send_out_detail (tx_hash,block_hash,block_number,from_address,to_address,gas,to_amount,tx_type) VALUES (?,?,?,?,?,?,?,?)")
 	defer stmt.Close()
 
 
-	ret,err := stmt.Exec(hash,blockHash,blockNumber,fromAddress,toAddress,gas,value)
+	ret,err := stmt.Exec(hash,blockHash,blockNumber,fromAddress,toAddress,gas,value,1)
 	if nil != err {
 		log.Println("InsertReceivedTransInfo: insert data error:%v",err)
 		return err
@@ -161,11 +190,11 @@ func (t EthTransactionHandler)  InsertReceivedERC20CoinInfo(
 		return errors.New("Can not conect to DB Server")
 	}
 
-	stmt,_ := db.Prepare("INSERT INTO send_out_detail (tx_hash,block_hash,block_number,from_address,to_address,contract_address,gas,to_amount) VALUES (?,?,?,?,?,?,?,?)")
+	stmt,_ := db.Prepare("INSERT INTO send_out_detail (tx_hash,block_hash,block_number,from_address,to_address,contract_address,gas,to_amount,tx_type) VALUES (?,?,?,?,?,?,?,?,?)")
 	defer stmt.Close()
 
 
-	ret,err := stmt.Exec(hash,blockHash,blockNumber,fromAddress,toAddress,constractAddress,gas,erc20Value)
+	ret,err := stmt.Exec(hash,blockHash,blockNumber,fromAddress,toAddress,constractAddress,gas,erc20Value,1)
 	if nil != err {
 		log.Println("InsertReceivedERC20CoinInfo: insert data error:%v",err)
 		return err
@@ -194,6 +223,11 @@ func (e EthTransactionHandler) NoticeTransAffirmed(transHash string) error {
 // 根据交易Hash 重发交易
 func (e EthTransactionHandler) NoticeTransFailed(transHash string) error{
 	log.Println("发：交易失败 短信------->>>>失败 ---HASH:%s",transHash)
+
+	if !e.ExistTransByHash(transHash) {
+		log.Println("HASH错误，不是本平台的交易HASH")
+	}
+
 	return e.sendMessage(transHash,2)
 }
 
@@ -222,25 +256,46 @@ func (e EthTransactionHandler)sendMessage(transHash string,stateTag int) error {
 
 
 	fromPhoneNumber := e.PhoneNumber(fromAddress)
+	fmt.Println("fromphone:",fromPhoneNumber)
 	toPhoneNumber := e.PhoneNumber(toAddress)
-	smbl,dec,err := e.GetCoinInfo(contract)
-	if nil != err {
-		log.Println(err)
-		return err
-	}
+	fmt.Println("tophone:",toPhoneNumber)
 
+	var smbl string
+	var dec int
+
+
+	contract = strings.Replace(contract, " ", "", -1)
+	if "" != contract { //是代币交易
+		smbl,dec,err = e.GetCoinInfo(contract)
+		if nil != err {
+			log.Println(err)
+			return err
+		}
+	} else {
+		smbl = "ETH"
+		dec = 18
+	}
+	fmt.Println(smbl,dec)
+
+
+	/*
 	amountDec,err := helper.Hex2Decimal(amount,dec,6)
 	if nil != err {
 		log.Println(err)
 		return err
 	}
 	amount = amountDec.String() + smbl
+	*/
+
+	amount = amount + smbl
+	fmt.Println(amount)
 
 	if 1 == stateTag { /// 更新交易的确认状态为确认
 		e.UpdateTransState(transHash)
 	} else { /// 删除未成功的交易记录
 		// 暂未实现
 	}
+
 
 	///////////////////////////////////////////////////////////////////////
 	req := HttpRequest.NewRequest()
@@ -280,13 +335,15 @@ func (e EthTransactionHandler)sendMessage(transHash string,stateTag int) error {
 
 
 func (e EthTransactionHandler)PhoneNumber(address string) string  {
-	db := e.getMySqlDb()
-	if nil == db {
+
+	db,err := sql.Open("mysql",configs.ServerDBConnectString)
+	if nil != err {
 		return ""
 	}
+	defer db.Close()
 
 	var phoneNumber string
-	err := db.QueryRow("SELECT phone_num FROM wallet WHERE id IN (SELECT wallet_id_id FROM coin_address WHERE address=?)",address).Scan(&phoneNumber)
+	err = db.QueryRow("SELECT phone_num FROM wallet WHERE id IN (SELECT wallet_id_id FROM coin_address WHERE address=?)",address).Scan(&phoneNumber)
 	if nil != err {
 		log.Println(err)
 		return ""
@@ -295,14 +352,16 @@ func (e EthTransactionHandler)PhoneNumber(address string) string  {
 }
 
 func (t EthTransactionHandler)GetCoinInfo(contract string) (string,int,error) {
-	db := t.getMySqlDb()
-	if nil == db {
+
+	db,err := sql.Open("mysql",configs.ServerDBConnectString)
+	if nil != err {
 		return "",0,errors.New("Can not conect to DB Server")
 	}
+	defer db.Close()
 
 	var symbol string
 	var decimal int
-	err := db.QueryRow("SELECT `mark`,`decimal` FROM tokens WHERE contract=?",contract).Scan(&symbol,&decimal)
+	err = db.QueryRow("SELECT `mark`,`decimal` FROM tokens WHERE contract=?",contract).Scan(&symbol,&decimal)
 	if nil != err {
 		return "",0,err
 	}
@@ -311,10 +370,12 @@ func (t EthTransactionHandler)GetCoinInfo(contract string) (string,int,error) {
 }
 
 func (t EthTransactionHandler)UpdateTransState(hash string) error  {
-	db := t.getMySqlDb()
-	if nil == db {
+
+	db,err := sql.Open("mysql",configs.ServerDBConnectString)
+	if nil != err {
 		return errors.New("Can not conect to DB Server")
 	}
+	defer db.Close()
 
 	stmt,_ := db.Prepare("UPDATE send_out_detail SET is_confirm=? WHERE tx_hash=?")
 	defer stmt.Close()
@@ -339,11 +400,13 @@ func (t EthTransactionHandler)UpdateTransState(hash string) error  {
 
 
 
-func (t EthTransactionHandler)GetTransMainInfo(hash string) ( string, string, string,string, error)  {
-	db := t.getMySqlDb()
-	if nil == db {
+func (e EthTransactionHandler)GetTransMainInfo(hash string) ( string, string, string,string, error)  {
+
+	db,err := sql.Open("mysql",configs.ServerDBConnectString)
+	if nil != err {
 		return "","","","",errors.New("Can not conect to DB Server")
 	}
+	defer db.Close()
 
 	var fromAddress string
 	var toAddress string
@@ -351,9 +414,8 @@ func (t EthTransactionHandler)GetTransMainInfo(hash string) ( string, string, st
 	var contract string
 
 
-	err:= db.QueryRow("SELECT from_address,to_address,to_amount,contract_address FROM send_out_detail WHERE tx_hash=?",hash).Scan(&fromAddress,&toAddress,&amount,&contract)
+	err= db.QueryRow("SELECT from_address,to_address,to_amount,contract_address FROM send_out_detail WHERE tx_hash=?",hash).Scan(&fromAddress,&toAddress,&amount,&contract)
 	if nil != err {
-		//log.Println(err)
 		return "","","","",err
 	}
 

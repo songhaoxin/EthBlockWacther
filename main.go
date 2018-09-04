@@ -14,10 +14,7 @@ import (
 
 func main()  {
 
-
-
 	////////////////////////////////////////////////////////////////////////////
-
 
 	wacther := wacther.Init()
 
@@ -40,17 +37,9 @@ func main()  {
 
 	signal.Notify(signalChan,syscall.SIGINT,syscall.SIGTERM,syscall.SIGKILL)
 
-
-
-	wacther.WacthStart()
-
-
-
-
+	wacther.WacthStart() //开始监听
 
 	/////////////////////////////////////////////////////////////////////////////////////////
-
-
 
 	fmt.Println("End")
 

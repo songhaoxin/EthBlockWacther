@@ -14,6 +14,7 @@ import (
 	"log"
 	"clmwallet-block-wacther/transactionhandler"
 	"clmwallet-block-wacther/helper"
+
 )
 
 
@@ -23,7 +24,6 @@ type BlockWacther struct {
 
 	// 维持同步的区块信息的存储池
 	// 该池中保存着足以用来确定交易的区块链信息
-	//blockPool *blockpool.BlockPool
 	blockPool *blockpool.StrategicPool
 
 
@@ -41,6 +41,9 @@ type BlockWacther struct {
 	// 定时器，实现定时从geth结点中拉取区块信息
 	fecthTimer *time.Timer
 
+	// 定时器，用于定时从本地池中确认区块信息
+	affiremTimer *time.Timer
+
 	// 满足TransInterface接口的交易处理器
 	// 负责具体处理 确认交易、重发交易 等功能
 	// 之所以设计成 接口方式，是为了解耦 拉取区块功能 和 处理交易功能
@@ -55,6 +58,7 @@ func Init() *BlockWacther {
 		succeedBlocksChain: make(chan string,1000),
 		failedBlocksChain:  make(chan string,1000),
 		fecthTimer:         time.NewTimer(configs.TimeDelayInSecand * time.Second),
+		affiremTimer:		time.NewTimer(configs.TimeDelayInSecand * time.Second),
 	}
 
 	b.TransHandler = transactionhandler.Init()
@@ -70,9 +74,13 @@ var wg sync.WaitGroup
 func (bw BlockWacther) WacthStart()  {
 	// 不调用它的.Done()方法，以另类地实现循环
 	wg.Add(1)
-	go bw.FecthParseBlockFromServerTimes()
-	go bw.HandleSuccessedTrans()
-	go bw.HandleFailedTrans()
+
+	go bw.FecthParseBlockFromServerTimes() //定时拉区块 截取失败的区块
+	go bw.AffermBlockFromPoolTimes() //定时确认区块
+
+	go bw.HandleSuccessedTrans() //监听成功的交易
+	go bw.HandleFailedTrans() //监听失败的交易
+
 	wg.Wait()
 }
 
@@ -131,6 +139,19 @@ func (bw BlockWacther) FecthParseBlockFromServerTimes()  {
 	}
 }
 
+func (bw BlockWacther) AffermBlockFromPoolTimes()  {
+	for {
+		select {
+		case <-bw.affiremTimer.C:
+			bw.affiremTimer.Stop()
+			// 选出已经确认的交易
+			bw.HandleBlocksSuccessed()
+
+			bw.affiremTimer.Reset(time.Second * configs.TimeDelayInSecand)
+		}
+	}
+}
+
 //从服务端获取的 需要确认的最早的区块号
 func (bw BlockWacther) getStartIdxFromServer() int64{
 	return 0
@@ -175,10 +196,14 @@ func (bw BlockWacther) _fecthParseBlock() {
 		//筛掉失败的区块交易
 		bw.ReceiveBlocksFilterFailed(node)
 	}
-
+/*
 	// 选出已经确认的交易
+	fmt.Println("准备去确认区块了1111111")
 	bw.HandleBlocksSuccessed()
+*/
 }
+
+
 
 // 选出需要重新打包发送的区块号
 func (bw BlockWacther) ReceiveBlocksFilterFailed(info *blocknode.BlockNodeInfo)  {
@@ -186,8 +211,8 @@ func (bw BlockWacther) ReceiveBlocksFilterFailed(info *blocknode.BlockNodeInfo) 
 	if nil == info {return }
 
 	node := bw.blockPool.ReciveBlockFromChain(info)
-	if nil == node {return }
 
+	if nil == node {return }
 
 
 	if "" == node.TransHash {return }

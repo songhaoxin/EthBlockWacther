@@ -16,6 +16,7 @@ import (
 var hdl *EthTransactionHandler  = Init()
 
 func TestExistAddress(t *testing.T)  {
+	/*
 	tcase := []struct {
 		address string
 		isExist bool
@@ -26,13 +27,21 @@ func TestExistAddress(t *testing.T)  {
 		//不是本平台
 		{"0x2DEF2400a4cC1aB21bfb6472B54A00643740E109",false},
 	}
+
 	for _,tt := range tcase{
 		actual := hdl.ExistAddress(tt.address)
 		if actual != tt.isExist {
 			t.Errorf("测试用例：%s 的结果本来应该是 %v,但测试的结果却为:%v",tt.address,tt.isExist,actual)
 		}
-	}
+	}*/
+	//for i:=1;i< 100000000000;i++{
+		hdl.ExistAddress("0x8fCC75bB4D90082D6EB3Aa9Da0d14DAbD538d34f")
+	//}
 
+}
+
+func BenchmarkEthTransactionHandler_ExistAddress(b *testing.B) {
+	hdl.ExistAddress("0x2DEF2400a4cC1aB21bfb6472B54A00643740E109")
 }
 
 func TestExistTransByHash(t *testing.T)  {
@@ -202,7 +211,7 @@ func TestEthTransactionHandler_GetTransMainInfoes(t *testing.T) {
 	fmt.Println(f,to,a,con,e)
 }
 
-func TestEthTransactionHandler_GetCoinType(t *testing.T) {
-	smbl,dec,err := hdl.GetCoinInfo("aaaaaaaaa")
-	fmt.Println(smbl,dec,err)
+func TestEthTransactionHandler_sendMessage(t *testing.T) {
+	hdl.sendMessage("0x84a0e1ca1888694e12a546f6cd08f803e7d1f04230d27fc456424521e58a938e",2)
 }
+
