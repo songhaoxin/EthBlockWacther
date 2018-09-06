@@ -8,13 +8,13 @@ type TransInterface interface {
 	ExistTransByHash(transHash string) bool
 
 	//根据交易Hash 增加blockNumber/blockHash到交易数据库表
-	AddBlockNumberHash(blockNumber string,blockHash string,withTransHash string) error
+	AddBlockNumberHash(blockNumber int64,blockHash string,withTransHash string) error
 
 	//根据解析的交易的信息（别人向我们的帐户转帐这一情况），添加一条记录到交易表
 	InsertReceivedTransInfo(
 		hash string,
 		blockHash string,
-		blockNumber string,
+		blockNumber int64,
 		fromAddress string,
 		toAddress string,
 		gas string,
@@ -24,7 +24,7 @@ type TransInterface interface {
 	InsertReceivedERC20CoinInfo(
 		hash string,
 		blockHash string,
-		blockNumber string,
+		blockNumber int64,
 		fromAddress string,
 		toAddress string,
 		constractAddress string,
@@ -54,5 +54,12 @@ type TransInterface interface {
 	//包括所以太坊币交易和ERC20代币交易
 	//GetUnHandledTransInfo() []map[string]string
 
+
+
+	GetLatestNumberShould2Fecth() int64
+
+	//SetLowestIdxFromGether(number int64) error
+
+	//GetLowestIdxFromGether() int64
 
 }

@@ -18,6 +18,7 @@ func main()  {
 
 	wacther := wacther.Init()
 
+
 	var stopLock sync.Mutex
 	stop := false
 	stopChan := make(chan struct{},1)

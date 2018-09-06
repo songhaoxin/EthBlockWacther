@@ -86,7 +86,7 @@ func HexDec(h string) (n int64) {
 	return int64(d)
 }
 
-func Hex2Decimal(hex string,tokenDecimal int,round int)  (decimal.Decimal,error){
+func Hex2Decimal(hex string,tokenDecimal int,round int32)  (decimal.Decimal,error){
 
 	sv := string([]byte(hex)[2:])
 	bv,ok := new(big.Int).SetString(sv,16)
@@ -97,7 +97,7 @@ func Hex2Decimal(hex string,tokenDecimal int,round int)  (decimal.Decimal,error)
 
 	decimalV := decimal.NewFromBigInt(big.NewInt(1),int32(tokenDecimal))
 
-	dv = dv.Div(decimalV).Round(2)
+	dv = dv.Div(decimalV).Round(round)
 
 	return dv,nil
 }

@@ -67,13 +67,13 @@ func TestExistTransByHash(t *testing.T)  {
 
 func TestAddBlockNumberHash(t *testing.T)  {
 	tcase := []struct{
-		blockNumber string
+		blockNumber int64
 		blockHash string
 		withTransHash string
 		err error
 	} {
 		{
-			"88888","hhhhhhhhhhsfsfsf","0x0ac50ee9ce8075be56aea8c893bdabaa96ec7f0c4345bdace93101ce75b4bd80",error(nil),
+			9999,"hhhhhhhhhhsfsfsf","0x0ac50ee9ce8075be56aea8c893bdabaa96ec7f0c4345bdace93101ce75b4bd80",error(nil),
 		},
 		/*
 		{
@@ -94,7 +94,7 @@ func TestInsertReceivedTransInfo(t *testing.T)  {
 	tcase := []struct{
 		hash string
 		blockHash string
-		blockNumber string
+		blockNumber int64
 		fromAddress string
 		toAddress string
 		gas string
@@ -103,7 +103,7 @@ func TestInsertReceivedTransInfo(t *testing.T)  {
 	} {
 		//成功的情况的测试用例
 		{
-			"1","11","111","112","221","12","12",nil,
+			"33333","11",1111111111,"112","221","12","0x56bc75e2d6310000",nil,
 		},
 		/*
 		//失败时候的测试用例
@@ -128,7 +128,7 @@ func TestInsertReceivedERC20CoinInfo(t *testing.T)  {
 	tcase := []struct{
 		hash string
 		blockHash string
-		blockNumber string
+		blockNumber int64
 		fromAddress string
 		toAddress string
 		constractAddress string
@@ -138,7 +138,7 @@ func TestInsertReceivedERC20CoinInfo(t *testing.T)  {
 	} {
 		//成功的情况的测试用例
 		{
-			"1999","12","32","23","32","代币的智能合约地址","232","23",nil,
+			"19961","12",4444444444444444,"23","32","0xd71c3ae0286286eac90dae97575d21c599ab0ffc11","232","0x56bc75e2d6310000",nil,
 		},
 		/*
 		//失败时候的测试用例
@@ -198,7 +198,7 @@ func TestNoticeTransFailed(t *testing.T)  {
 }
 
 func TestEthTransactionHandler_UpdateTransState(t *testing.T) {
-	err := hdl.UpdateTransState("0x0ac50ee9ce8075be56aea8c893bdabaa96ec7f0c4345bdace93101ce75b4bd80")
+	err := hdl.UpdateTransState("0x0ac50ee9ce8075be56aea8c893bdabaa96ec7f0c4345bdace93101ce75b4bd80",1)
 	if nil != err {
 		log.Println(err)
 	}
@@ -212,6 +212,21 @@ func TestEthTransactionHandler_GetTransMainInfoes(t *testing.T) {
 }
 
 func TestEthTransactionHandler_sendMessage(t *testing.T) {
-	hdl.sendMessage("0x84a0e1ca1888694e12a546f6cd08f803e7d1f04230d27fc456424521e58a938e",2)
+	hdl.sendMessage("0xebee9bfbdf9427a4be43671056cae7cdc601e53b307e0d524d0704e4a43a4cd8",1)
 }
+
+func TestEthTransactionHandler_SetLowestIdxFromGether(t *testing.T) {
+	if nil != hdl.SetLowestIdxFromGether(120) {
+		t.Errorf("错误")
+	}
+}
+
+func TestEthTransactionHandler_GetLowestIdxFromServer(t *testing.T) {
+	n := hdl.GetLowestIdxFromServer()
+	fmt.Println(n)
+}
+
+
+
+
 

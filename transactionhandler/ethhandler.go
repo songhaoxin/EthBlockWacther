@@ -25,7 +25,7 @@ func Init() *EthTransactionHandler {
 	return &EthTransactionHandler{}
 }
 
-func (e EthTransactionHandler) CloseDB()  {
+func (e *EthTransactionHandler) CloseDB()  {
 	if nil != e.db {
 		e.db.Close()
 	}
@@ -33,6 +33,7 @@ func (e EthTransactionHandler) CloseDB()  {
 
 ///====================== TransInterface协议方法========================
 //////////////////////////////////////////////////////////////////////////////////
+
 func (e EthTransactionHandler) getMySqlDb() *sql.DB  {
 	var err error = nil
 	if nil == e.db {
@@ -49,10 +50,21 @@ func (e EthTransactionHandler) getMySqlDb() *sql.DB  {
 // 判断指定的 地址 是否属于平台内帐户
 func (t EthTransactionHandler) ExistAddress(address string) bool {
 
-	//db := t.getMySqlDb()
-	//if nil == db {
-	//	return false
-	//}
+	/*
+	db := t.getMySqlDb()
+	if nil == db {
+		return false
+	}
+
+	var address2 string
+
+	err := db.QueryRow("SELECT address FROM coin_address WHERE address=?",address).Scan(&address2)
+	if nil != err {
+		//log.Println(err,"ExistAddress")
+		return false
+	}
+	return true
+*/
 
 	db,err := sql.Open("mysql",configs.ServerDBConnectString)
 	if nil != err {
@@ -61,36 +73,19 @@ func (t EthTransactionHandler) ExistAddress(address string) bool {
 	defer db.Close()
 
 	var address2 string
-	/*
-	err := db.QueryRow("SELECT address FROM coin_address WHERE address=?",address).Scan(&address2)
+
+	err = db.QueryRow("SELECT address FROM coin_address WHERE address=?",address).Scan(&address2)
 	if nil != err {
-		log.Println(err,"ExistAddress")
-		return false
-	}*/
-	rows,err := db.Query("SELECT address FROM coin_address WHERE address=?",address)
-	defer rows.Close()
-
-	if err != nil {
-		log.Println(err)
+		//log.Println(err,"ExistAddress")
 		return false
 	}
+	return true
 
-	var exsit = false
-	for rows.Next() {
-		rows.Scan(&address2)
-		fmt.Println("结果",address2)
-		exsit = true
-	}
 
-	return exsit
 
 }
 
 func (t EthTransactionHandler) ExistTransByHash(transHash string) bool {
-	//db := t.getMySqlDb()
-	//if nil == db {
-	//	return false
-	//}
 
 	db,err := sql.Open("mysql",configs.ServerDBConnectString)
 	if nil != err {
@@ -111,12 +106,18 @@ func (t EthTransactionHandler) ExistTransByHash(transHash string) bool {
 }
 
 //根据交易Hash 增加blockNumber/blockHash到交易数据库表
-func (t EthTransactionHandler) AddBlockNumberHash(blockNumber string,blockHash string,withTransHash string) error{
+func (t EthTransactionHandler) AddBlockNumberHash(blockNumber int64,blockHash string,withTransHash string) error{
 
-	db := t.getMySqlDb()
-	if nil == db {
+	//db := t.getMySqlDb()
+	//if nil == db {
+	//	return errors.New("Can not conect to DB Server")
+	//}
+
+	db,err := sql.Open("mysql",configs.ServerDBConnectString)
+	if nil != err {
 		return errors.New("Can not conect to DB Server")
 	}
+	defer db.Close()
 
 	stmt,_ := db.Prepare("UPDATE send_out_detail SET block_number=?,block_hash=? WHERE tx_hash=?")
 	defer stmt.Close()
@@ -142,16 +143,26 @@ func (t EthTransactionHandler) AddBlockNumberHash(blockNumber string,blockHash s
 func (t EthTransactionHandler)InsertReceivedTransInfo(
 	hash string,
 	blockHash string,
-	blockNumber string,
+	blockNumber int64,
 	fromAddress string,
 	toAddress string,
 	gas string,
 	value string) error {
 
-	db := t.getMySqlDb()
-	if nil == db {
+	db,err := sql.Open("mysql",configs.ServerDBConnectString)
+	if nil != err {
 		return errors.New("Can not conect to DB Server")
 	}
+	defer db.Close()
+
+	//把value转换成十进制数
+	valueDec,err := helper.Hex2Decimal(value,18,8)
+	if nil != err {
+		log.Println(err)
+		return err
+	}
+	value = valueDec.String()
+
 
 	stmt,_ := db.Prepare("INSERT INTO send_out_detail (tx_hash,block_hash,block_number,from_address,to_address,gas,to_amount,tx_type) VALUES (?,?,?,?,?,?,?,?)")
 	defer stmt.Close()
@@ -175,20 +186,36 @@ func (t EthTransactionHandler)InsertReceivedTransInfo(
 }
 
 //根据解析的ERC20代币交易信息(别人向我们的帐户转帐这一情况），添加一条记录到交易表
-func (t EthTransactionHandler)  InsertReceivedERC20CoinInfo(
+func (e EthTransactionHandler)  InsertReceivedERC20CoinInfo(
 	hash string,
 	blockHash string,
-	blockNumber string,
+	blockNumber int64,
 	fromAddress string,
 	toAddress string,
 	constractAddress string,
 	gas string,
 	erc20Value string) error{
 
-	db := t.getMySqlDb()
-	if nil == db {
+	db,err := sql.Open("mysql",configs.ServerDBConnectString)
+	if nil != err {
 		return errors.New("Can not conect to DB Server")
 	}
+	defer db.Close()
+
+	_,dec,err := e.GetCoinInfo(constractAddress)
+	if nil != err {
+		log.Println(err)
+		return err
+	}
+	log.Println("decimal:",dec)
+
+	//把value转换成十进制数
+	erc20Dec,err := helper.Hex2Decimal(erc20Value,dec,8)
+	if nil != err {
+		log.Println(err)
+		return err
+	}
+	erc20Value = erc20Dec.String()
 
 	stmt,_ := db.Prepare("INSERT INTO send_out_detail (tx_hash,block_hash,block_number,from_address,to_address,contract_address,gas,to_amount,tx_type) VALUES (?,?,?,?,?,?,?,?,?)")
 	defer stmt.Close()
@@ -208,7 +235,6 @@ func (t EthTransactionHandler)  InsertReceivedERC20CoinInfo(
 	}
 
 	return nil
-
 
 }
 
@@ -236,6 +262,7 @@ func (e EthTransactionHandler) NoticeTransFailed(transHash string) error{
 ///私有方法
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 func (e EthTransactionHandler)sendMessage(transHash string,stateTag int) error {
+
 	fromAddress,toAddress,amount,contract,err := e.GetTransMainInfo(transHash)
 	if nil != err {return err}
 
@@ -278,23 +305,10 @@ func (e EthTransactionHandler)sendMessage(transHash string,stateTag int) error {
 	fmt.Println(smbl,dec)
 
 
-	/*
-	amountDec,err := helper.Hex2Decimal(amount,dec,6)
-	if nil != err {
-		log.Println(err)
-		return err
-	}
-	amount = amountDec.String() + smbl
-	*/
-
 	amount = amount + smbl
 	fmt.Println(amount)
 
-	if 1 == stateTag { /// 更新交易的确认状态为确认
-		e.UpdateTransState(transHash)
-	} else { /// 删除未成功的交易记录
-		// 暂未实现
-	}
+	e.UpdateTransState(transHash,stateTag)
 
 
 	///////////////////////////////////////////////////////////////////////
@@ -369,7 +383,10 @@ func (t EthTransactionHandler)GetCoinInfo(contract string) (string,int,error) {
 	return symbol,decimal,nil
 }
 
-func (t EthTransactionHandler)UpdateTransState(hash string) error  {
+func (t EthTransactionHandler)UpdateTransState(hash string,state int) error  {
+	if 1 != state && 2 != state {
+		return errors.New("Paramas `state` allowed range of  1 or 2")
+	}
 
 	db,err := sql.Open("mysql",configs.ServerDBConnectString)
 	if nil != err {
@@ -380,7 +397,7 @@ func (t EthTransactionHandler)UpdateTransState(hash string) error  {
 	stmt,_ := db.Prepare("UPDATE send_out_detail SET is_confirm=? WHERE tx_hash=?")
 	defer stmt.Close()
 
-	ret,err := stmt.Exec(1,hash)
+	ret,err := stmt.Exec(state,hash)
 	if nil != err {
 		log.Println("UpdateTransState: set  is_confirm error:%v",err)
 		return err
@@ -422,4 +439,97 @@ func (e EthTransactionHandler)GetTransMainInfo(hash string) ( string, string, st
 	return fromAddress,toAddress,amount,contract,nil
 
 }
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+func (t EthTransactionHandler)GetLatestNumberShould2Fecth() int64  {
+	number1 := t.GetLowestIdxFromGether()
+	number2 := t.GetLowestIdxFromServer()
+	if number1 < number2 {
+		if number1 >= 0 {
+			return number1
+		} else if number2 >= 0 {
+			return number2
+		}
+	} else {
+		if number2 <= 0 {
+			return number1
+		} else {
+			return number2
+		}
+	}
+	return -1
+}
+
+//从服务端获取的 需要确认的最早的区块号
+func (t EthTransactionHandler) GetLowestIdxFromServer() int64 {
+	/*
+	db, err := sql.Open("mysql", configs.ServerDBConnectString)
+	if nil != err {
+		return -1, err
+	}
+	defer db.Close()
+	*/
+
+	db := t.getMySqlDb()
+	if nil == db {
+		return -1
+	}
+
+	var lowestNumber int64
+	err := db.QueryRow(`SELECT  block_number FROM send_out_detail  WHERE is_confirm = 0 ORDER BY block_number ASC LIMIT 0,1`).Scan(&lowestNumber)
+	if nil != err {
+		return -1
+	}
+	return lowestNumber
+}
+
+
+/*
+func (t *EthTransactionHandler) SetLowestIdxFromGether(number int64) error {
+
+	idx := t.GetLowestIdxFromGether()
+	db := t.getMySqlDb()
+	if idx != -1 {
+		stmt,_ := db.Prepare("UPDATE block_fecthed_info SET latestnumber=?")
+		defer stmt.Close()
+
+		_,err := stmt.Exec(number)
+		if nil != err {
+			log.Println("SetLowestIdxFromGether(ADD): ADD data error:%v",err)
+			return err
+		}
+	} else {
+		stmt,_ := db.Prepare("INSERT INTO block_fecthed_info (latestnumber) VALUES (?)")
+		defer stmt.Close()
+
+		_,err := stmt.Exec(number)
+		if nil != err {
+			log.Println("SetLowestIdxFromGether(UPDATE): UPDATE data error:%v",err)
+			return err
+		}
+	}
+
+	return nil
+}
+*/
+
+//从服务端获取的 需要确认的最早的区块号
+func (t EthTransactionHandler) GetLowestIdxFromGether() int64 {
+	db := t.getMySqlDb()
+	if nil == db {
+		return -1
+	}
+
+	var lowestNumber int64
+	err := db.QueryRow(`SELECT latestnumber FROM block_fecthed_info `).Scan(&lowestNumber)
+	if nil != err {
+		return -1
+	}
+
+	return lowestNumber
+}
+
 

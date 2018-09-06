@@ -20,8 +20,8 @@ const ServerDBConnectString  = "root:current@tcp(47.75.194.231)/multi_wallet?cha
 
 // 保存同步区块数据库信息
 //const BlockDataConnectString  = "root:root@tcp(127.0.0.1)/clwallet?charset=utf8&parseTime=True&loc=Local"
-const BlockDataConnectString  = "root:root@tcp(120.77.223.246)/clwallet?charset=utf8&parseTime=True&loc=Local"
-//const BlockDataConnectString  = "root:current@tcp(47.106.136.96)/multi_wallet?charset=utf8&parseTime=True&loc=Local"
+//const BlockDataConnectString  = "root:root@tcp(120.77.223.246)/clwallet?charset=utf8&parseTime=True&loc=Local"
+const BlockDataConnectString  = "root:current@tcp(47.75.194.231)/multi_wallet?charset=utf8&parseTime=True&loc=Local"
 
 
 // "47.106.136.96"
