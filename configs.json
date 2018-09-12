@@ -1,0 +1,8 @@
+
+{
+  "GethHost":"http://47.75.115.210:8545",
+  "BlockDataConnectString":"root:current@tcp(47.75.194.231)/multi_wallet?charset=utf8&parseTime=True&loc=Local",
+  "BlockDataConnectString":"root:current@tcp(47.75.194.231)/multi_wallet?charset=utf8&parseTime=True&loc=Local",
+  "AffiremBlockHeigh":6,
+  "TimeDelayInSecand":10999
+}

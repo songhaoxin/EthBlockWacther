@@ -2,18 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="99ffba9e-2d2e-447b-add4-04e0fd2de260" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/wacther/wacther_test.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/configs/configs_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/blockpool/strategicpool.go" beforeDir="false" afterPath="$PROJECT_DIR$/blockpool/strategicpool.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/clinterface/transInterface.go" beforeDir="false" afterPath="$PROJECT_DIR$/clinterface/transInterface.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clmwallet-block-wacther" beforeDir="false" afterPath="$PROJECT_DIR$/clmwallet-block-wacther" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/configs/configs.go" beforeDir="false" afterPath="$PROJECT_DIR$/configs/configs.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/helper/helper.go" beforeDir="false" afterPath="$PROJECT_DIR$/helper/helper.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/helper/helper_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/helper/helper_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/transactionhandler/ethhandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/transactionhandler/ethhandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/transactionhandler/ethhandler_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/transactionhandler/ethhandler_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/wacther/wacther.go" beforeDir="false" afterPath="$PROJECT_DIR$/wacther/wacther.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wacther/wacther_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/wacther/wacther_test.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -114,8 +112,17 @@
       <file leaf-file-name="ethhandler.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/transactionhandler/ethhandler.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="294">
-              <caret line="516" column="2" selection-start-line="516" selection-start-column="2" selection-end-line="516" selection-end-column="2" />
+            <state relative-caret-position="391">
+              <caret line="452" column="26" lean-forward="true" selection-start-line="452" selection-start-column="26" selection-end-line="452" selection-end-column="26" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="wacther.go" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/wacther/wacther.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="431">
+              <caret line="85" column="13" lean-forward="true" selection-start-line="85" selection-start-column="13" selection-end-line="85" selection-end-column="13" />
             </state>
           </provider>
         </entry>
@@ -123,8 +130,26 @@
       <file leaf-file-name="transInterface.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/clinterface/transInterface.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="13">
-              <caret line="37" column="23" selection-start-line="37" selection-start-column="23" selection-end-line="37" selection-end-column="23" />
+            <state relative-caret-position="1016">
+              <caret line="58" column="4" selection-start-line="58" selection-start-column="4" selection-end-line="58" selection-end-column="4" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="helper.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/helper/helper.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="946">
+              <caret line="51" column="5" selection-start-line="51" selection-start-column="5" selection-end-line="51" selection-end-column="5" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="wacther_test.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/wacther/wacther_test.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="418">
+              <caret line="23" column="1" lean-forward="true" selection-start-line="23" selection-start-column="1" selection-end-line="23" selection-end-column="1" />
             </state>
           </provider>
         </entry>
@@ -132,47 +157,8 @@
       <file leaf-file-name="main.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="438">
-              <caret line="39" selection-start-line="39" selection-end-line="39" />
-              <folding>
-                <element signature="e#14#66#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="sql.go" pinned="false" current-in-tab="false">
-        <entry file="file:///usr/local/go/src/database/sql/sql.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="216">
-              <caret line="2252" selection-start-line="2252" selection-end-line="2252" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="panic.go" pinned="false" current-in-tab="false">
-        <entry file="file:///usr/local/go/src/runtime/panic.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="436">
-              <caret line="511" selection-start-line="511" selection-end-line="511" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="wacther.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/wacther/wacther.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-9029">
-              <caret line="97" column="1" lean-forward="true" selection-start-line="97" selection-start-column="1" selection-end-line="97" selection-end-column="1" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="packets.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../github.com/go-sql-driver/mysql/packets.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="616">
-              <caret line="38" column="9" selection-start-line="38" selection-start-column="9" selection-end-line="38" selection-end-column="9" />
+            <state relative-caret-position="88">
+              <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
             </state>
           </provider>
         </entry>
@@ -180,17 +166,26 @@
       <file leaf-file-name="ethhandler_test.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/transactionhandler/ethhandler_test.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="362">
-              <caret line="218" column="43" selection-start-line="218" selection-start-column="43" selection-end-line="218" selection-end-column="43" />
+            <state relative-caret-position="4928">
+              <caret line="228" selection-start-line="228" selection-end-line="228" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="strategicpool.go" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/blockpool/strategicpool.go">
+      <file leaf-file-name="packets.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../github.com/go-sql-driver/mysql/packets.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="310">
-              <caret line="157" column="9" lean-forward="true" selection-start-line="157" selection-start-column="9" selection-end-line="157" selection-end-column="9" />
+            <state relative-caret-position="550">
+              <caret line="35" column="16" lean-forward="true" selection-start-line="35" selection-start-column="16" selection-end-line="35" selection-end-column="16" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="errors.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../github.com/go-sql-driver/mysql/errors.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="748">
+              <caret line="39" column="4" selection-start-line="39" selection-start-column="4" selection-end-line="39" selection-end-column="4" />
             </state>
           </provider>
         </entry>
@@ -198,8 +193,11 @@
       <file leaf-file-name="configs.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/configs/configs.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="365">
-              <caret line="33" column="28" selection-start-line="33" selection-start-column="28" selection-end-line="33" selection-end-column="28" />
+            <state relative-caret-position="330">
+              <caret line="18" column="44" selection-start-line="18" selection-start-column="19" selection-end-line="18" selection-end-column="44" />
+              <folding>
+                <element signature="e#107#147#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -237,6 +235,8 @@
       <find>RowsAffected</find>
       <find>是我们平台发出的交易</find>
       <find>发送成功交易HASH</find>
+      <find>http://47.75.115.210:8545</find>
+      <find>本次扫描到的需要确认的所有HASH</find>
     </findStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$</dir>
@@ -267,16 +267,20 @@
         <option value="$PROJECT_DIR$/sortedint64slice/sortedint64slice.go" />
         <option value="$PROJECT_DIR$/sortedint64slice/sortedint64slice_test.go" />
         <option value="$PROJECT_DIR$/blockpool/strategicpool_test.go" />
-        <option value="$PROJECT_DIR$/wacther/wacther_test.go" />
-        <option value="$PROJECT_DIR$/transactionhandler/ethhandler_test.go" />
         <option value="$PROJECT_DIR$/helper/helper_test.go" />
         <option value="$PROJECT_DIR$/helper/helper.go" />
-        <option value="$PROJECT_DIR$/configs/configs.go" />
+        <option value="$PROJECT_DIR$/../clmwallet-block-wacther1/configs/configs.go" />
+        <option value="$PROJECT_DIR$/configs/configs.json" />
+        <option value="$PROJECT_DIR$/configs/configs_test.go" />
+        <option value="$PROJECT_DIR$/configs.json" />
         <option value="$PROJECT_DIR$/main.go" />
+        <option value="$PROJECT_DIR$/configs/configs.go" />
+        <option value="$PROJECT_DIR$/blockpool/strategicpool.go" />
+        <option value="$PROJECT_DIR$/clinterface/transInterface.go" />
+        <option value="$PROJECT_DIR$/transactionhandler/ethhandler_test.go" />
+        <option value="$PROJECT_DIR$/wacther/wacther_test.go" />
         <option value="$PROJECT_DIR$/wacther/wacther.go" />
         <option value="$PROJECT_DIR$/transactionhandler/ethhandler.go" />
-        <option value="$PROJECT_DIR$/clinterface/transInterface.go" />
-        <option value="$PROJECT_DIR$/blockpool/strategicpool.go" />
       </list>
     </option>
   </component>
@@ -290,8 +294,8 @@
     <packageJsonPaths />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="363" />
-    <option name="y" value="23" />
+    <option name="x" value="671" />
+    <option name="y" value="31" />
     <option name="width" value="1602" />
     <option name="height" value="1205" />
   </component>
@@ -301,7 +305,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -318,6 +321,16 @@
               <item name="clmwallet-block-wacther" type="b2602c69:ProjectViewProjectNode" />
               <item name="clmwallet-block-wacther" type="462c0819:PsiDirectoryNode" />
               <item name="clinterface" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="clmwallet-block-wacther" type="b2602c69:ProjectViewProjectNode" />
+              <item name="clmwallet-block-wacther" type="462c0819:PsiDirectoryNode" />
+              <item name="configs" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="clmwallet-block-wacther" type="b2602c69:ProjectViewProjectNode" />
+              <item name="clmwallet-block-wacther" type="462c0819:PsiDirectoryNode" />
+              <item name="database" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="clmwallet-block-wacther" type="b2602c69:ProjectViewProjectNode" />
@@ -342,6 +355,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
       <pane id="AndroidView" />
       <pane id="PackagesPane" />
     </panes>
@@ -379,38 +393,27 @@
       <package value="clmwallet-block-wacther" />
       <directory value="$PROJECT_DIR$/" />
     </configuration>
-    <configuration name="TestEthTransactionHandler_GetLowestIdxFromServer in clmwallet-block-wacther/transactionhandler" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestBlockWacther_CleanTask in clmwallet-block-wacther/wacther" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="clmwalletWacther" />
-      <working_directory value="$PROJECT_DIR$/transactionhandler" />
+      <working_directory value="$PROJECT_DIR$/wacther" />
       <go_parameters value="-i" />
       <framework value="gotest" />
       <kind value="PACKAGE" />
-      <package value="clmwallet-block-wacther/transactionhandler" />
+      <package value="clmwallet-block-wacther/wacther" />
       <directory value="$PROJECT_DIR$/" />
       <filePath value="$PROJECT_DIR$/" />
-      <pattern value="^TestEthTransactionHandler_GetLowestIdxFromServer$" />
+      <pattern value="^TestBlockWacther_CleanTask$" />
     </configuration>
-    <configuration name="TestEthTransactionHandler_SetLowestIdxFromGether in clmwallet-block-wacther/transactionhandler" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestConfig_Load in clmwallet-block-wacther/configs" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="clmwalletWacther" />
-      <working_directory value="$PROJECT_DIR$/transactionhandler" />
+      <working_directory value="$PROJECT_DIR$/configs" />
       <go_parameters value="-i" />
       <framework value="gotest" />
       <kind value="PACKAGE" />
-      <package value="clmwallet-block-wacther/transactionhandler" />
+      <package value="clmwallet-block-wacther/configs" />
       <directory value="$PROJECT_DIR$/" />
       <filePath value="$PROJECT_DIR$/" />
-      <pattern value="^TestEthTransactionHandler_SetLowestIdxFromGether$" />
-    </configuration>
-    <configuration name="TestEthTransactionHandler_sendMessage in clmwallet-block-wacther/transactionhandler" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="clmwalletWacther" />
-      <working_directory value="$PROJECT_DIR$/transactionhandler" />
-      <go_parameters value="-i" />
-      <framework value="gotest" />
-      <kind value="PACKAGE" />
-      <package value="clmwallet-block-wacther/transactionhandler" />
-      <directory value="$PROJECT_DIR$/" />
-      <filePath value="$PROJECT_DIR$/" />
-      <pattern value="^TestEthTransactionHandler_sendMessage$" />
+      <pattern value="^TestConfig_Load$" />
     </configuration>
     <configuration name="TestHex2Decimal in clmwallet-block-wacther/helper" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="clmwalletWacther" />
@@ -423,20 +426,31 @@
       <filePath value="$PROJECT_DIR$/" />
       <pattern value="^TestHex2Decimal$" />
     </configuration>
+    <configuration name="TestJsonStruct_Load in clmwallet-block-wacther/configs" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="clmwalletWacther" />
+      <working_directory value="$PROJECT_DIR$/configs" />
+      <go_parameters value="-i" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="clmwallet-block-wacther/configs" />
+      <directory value="$PROJECT_DIR$/" />
+      <filePath value="$PROJECT_DIR$/" />
+      <pattern value="^TestJsonStruct_Load$" />
+    </configuration>
     <list>
       <item itemvalue="Go Build.go build main.go" />
-      <item itemvalue="Go Test.TestEthTransactionHandler_sendMessage in clmwallet-block-wacther/transactionhandler" />
-      <item itemvalue="Go Test.TestEthTransactionHandler_SetLowestIdxFromGether in clmwallet-block-wacther/transactionhandler" />
-      <item itemvalue="Go Test.TestEthTransactionHandler_GetLowestIdxFromServer in clmwallet-block-wacther/transactionhandler" />
       <item itemvalue="Go Test.TestHex2Decimal in clmwallet-block-wacther/helper" />
+      <item itemvalue="Go Test.TestJsonStruct_Load in clmwallet-block-wacther/configs" />
+      <item itemvalue="Go Test.TestConfig_Load in clmwallet-block-wacther/configs" />
+      <item itemvalue="Go Test.TestBlockWacther_CleanTask in clmwallet-block-wacther/wacther" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Go Build.go build main.go" />
+        <item itemvalue="Go Test.TestBlockWacther_CleanTask in clmwallet-block-wacther/wacther" />
+        <item itemvalue="Go Test.TestConfig_Load in clmwallet-block-wacther/configs" />
+        <item itemvalue="Go Test.TestJsonStruct_Load in clmwallet-block-wacther/configs" />
         <item itemvalue="Go Test.TestHex2Decimal in clmwallet-block-wacther/helper" />
-        <item itemvalue="Go Test.TestEthTransactionHandler_SetLowestIdxFromGether in clmwallet-block-wacther/transactionhandler" />
-        <item itemvalue="Go Test.TestEthTransactionHandler_GetLowestIdxFromServer in clmwallet-block-wacther/transactionhandler" />
-        <item itemvalue="Go Test.TestEthTransactionHandler_sendMessage in clmwallet-block-wacther/transactionhandler" />
       </list>
     </recent_temporary>
   </component>
@@ -455,35 +469,35 @@
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="TestEthTransactionHandler_GetLowestIdxFromServer_in_clmwallet-block-wacther_transactionhandler - 2018.09.06 at 17h 23m 13s.xml">
-      <configuration name="TestEthTransactionHandler_GetLowestIdxFromServer in clmwallet-block-wacther/transactionhandler" configurationId="GoTestRunConfiguration" />
+    <history-entry file="TestJsonStruct_Load_in_clmwallet-block-wacther_configs - 2018.09.07 at 11h 52m 44s.xml">
+      <configuration name="TestJsonStruct_Load in clmwallet-block-wacther/configs" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="TestEthTransactionHandler_GetLowestIdxFromServer_in_clmwallet-block-wacther_transactionhandler - 2018.09.06 at 17h 25m 15s.xml">
-      <configuration name="TestEthTransactionHandler_GetLowestIdxFromServer in clmwallet-block-wacther/transactionhandler" configurationId="GoTestRunConfiguration" />
+    <history-entry file="TestJsonStruct_Load_in_clmwallet-block-wacther_configs - 2018.09.07 at 11h 56m 01s.xml">
+      <configuration name="TestJsonStruct_Load in clmwallet-block-wacther/configs" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="TestEthTransactionHandler_SetLowestIdxFromGether_in_clmwallet-block-wacther_transactionhandler - 2018.09.06 at 17h 26m 05s.xml">
-      <configuration name="TestEthTransactionHandler_SetLowestIdxFromGether in clmwallet-block-wacther/transactionhandler" configurationId="GoTestRunConfiguration" />
+    <history-entry file="TestJsonStruct_Load_in_clmwallet-block-wacther_configs - 2018.09.07 at 11h 57m 24s.xml">
+      <configuration name="TestJsonStruct_Load in clmwallet-block-wacther/configs" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="TestHex2Decimal_in_clmwallet-block-wacther_helper - 2018.09.06 at 17h 33m 53s.xml">
-      <configuration name="TestHex2Decimal in clmwallet-block-wacther/helper" configurationId="GoTestRunConfiguration" />
+    <history-entry file="TestConfig_Load_in_clmwallet-block-wacther_configs - 2018.09.07 at 12h 00m 51s.xml">
+      <configuration name="TestConfig_Load in clmwallet-block-wacther/configs" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="TestHex2Decimal_in_clmwallet-block-wacther_helper - 2018.09.06 at 17h 34m 19s.xml">
-      <configuration name="TestHex2Decimal in clmwallet-block-wacther/helper" configurationId="GoTestRunConfiguration" />
+    <history-entry file="TestConfig_Load_in_clmwallet-block-wacther_configs - 2018.09.07 at 12h 01m 32s.xml">
+      <configuration name="TestConfig_Load in clmwallet-block-wacther/configs" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="TestHex2Decimal_in_clmwallet-block-wacther_helper - 2018.09.06 at 17h 34m 39s.xml">
-      <configuration name="TestHex2Decimal in clmwallet-block-wacther/helper" configurationId="GoTestRunConfiguration" />
+    <history-entry file="TestConfig_Load_in_clmwallet-block-wacther_configs - 2018.09.07 at 12h 01m 39s.xml">
+      <configuration name="TestConfig_Load in clmwallet-block-wacther/configs" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="TestHex2Decimal_in_clmwallet-block-wacther_helper - 2018.09.06 at 17h 35m 35s.xml">
-      <configuration name="TestHex2Decimal in clmwallet-block-wacther/helper" configurationId="GoTestRunConfiguration" />
+    <history-entry file="TestConfig_Load_in_clmwallet-block-wacther_configs - 2018.09.07 at 12h 02m 56s.xml">
+      <configuration name="TestConfig_Load in clmwallet-block-wacther/configs" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="TestHex2Decimal_in_clmwallet-block-wacther_helper - 2018.09.06 at 17h 36m 57s.xml">
-      <configuration name="TestHex2Decimal in clmwallet-block-wacther/helper" configurationId="GoTestRunConfiguration" />
+    <history-entry file="TestConfig_Load_in_clmwallet-block-wacther_configs - 2018.09.07 at 13h 55m 33s.xml">
+      <configuration name="TestConfig_Load in clmwallet-block-wacther/configs" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="TestHex2Decimal_in_clmwallet-block-wacther_helper - 2018.09.06 at 17h 38m 01s.xml">
-      <configuration name="TestHex2Decimal in clmwallet-block-wacther/helper" configurationId="GoTestRunConfiguration" />
+    <history-entry file="TestBlockWacther_CleanTask_in_clmwallet-block-wacther_wacther - 2018.09.10 at 16h 03m 59s.xml">
+      <configuration name="TestBlockWacther_CleanTask in clmwallet-block-wacther/wacther" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="TestHex2Decimal_in_clmwallet-block-wacther_helper - 2018.09.06 at 17h 41m 00s.xml">
-      <configuration name="TestHex2Decimal in clmwallet-block-wacther/helper" configurationId="GoTestRunConfiguration" />
+    <history-entry file="TestBlockWacther_CleanTask_in_clmwallet-block-wacther_wacther - 2018.09.10 at 16h 16m 07s.xml">
+      <configuration name="TestBlockWacther_CleanTask in clmwallet-block-wacther/wacther" configurationId="GoTestRunConfiguration" />
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
@@ -499,25 +513,23 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="363" y="23" width="1602" height="1205" extended-state="0" />
+    <frame x="671" y="31" width="1602" height="1205" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49568966" visible="true" weight="0.14102565" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49568966" visible="true" weight="0.14551282" />
       <window_info anchor="bottom" id="TODO" order="5" weight="0.32970712" />
       <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50026923" side_tool="true" weight="0.39655173" />
       <window_info anchor="right" id="Database" order="3" weight="0.3296796" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32891247" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="6" weight="0.32970712" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49973074" side_tool="true" visible="true" weight="0.25529954" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49973074" side_tool="true" weight="0.5529954" />
       <window_info id="Structure" order="1" sideWeight="0.5008518" side_tool="true" weight="0.14049587" />
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.3234811" />
       <window_info id="Favorites" order="2" sideWeight="0.50431037" side_tool="true" weight="0.14102565" />
-      <window_info anchor="bottom" auto_hide="true" x="552" y="780" width="1422" height="432" id="Debug" order="10" type="WINDOWED" weight="0.9589958" />
+      <window_info anchor="bottom" auto_hide="true" x="218" y="933" width="1422" height="432" id="Debug" order="10" type="WINDOWED" weight="0.9589958" />
       <window_info anchor="right" id="Palette" order="4" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Capture Analysis" order="5" />
-      <window_info anchor="right" id="Coverage" order="9" side_tool="true" weight="0.32970577" />
       <window_info anchor="bottom" id="Inspection" order="4" weight="0.4" />
       <window_info anchor="right" id="Theme Preview" order="6" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -525,11 +537,13 @@
       <window_info id="Image Layers" order="3" />
       <window_info id="Designer" order="4" />
       <window_info id="UI Designer" order="5" />
+      <window_info anchor="right" id="Maven Projects" order="8" />
       <window_info anchor="right" id="Palette&#9;" order="7" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="3" weight="0.25" />
       <window_info id="Capture Tool" order="6" />
-      <window_info anchor="right" id="Maven Projects" order="8" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32891247" />
+      <window_info anchor="right" id="Coverage" order="9" side_tool="true" weight="0.32970577" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -590,60 +604,16 @@
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/helper/helper_test.go</url>
           <line>17</line>
-          <properties />
           <option name="timeStamp" value="65" />
         </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="71" />
+      <option name="time" value="74" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../clmwalletWacther/config/config.go" />
-    <entry file="file:///usr/local/go/src/time/sleep.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1650">
-          <caret line="75" selection-start-line="75" selection-end-line="75" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/local/go/src/sync/once.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="704">
-          <caret line="34" selection-start-line="34" selection-end-line="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/local/go/src/strings/strings.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="261">
-          <caret line="297" selection-start-line="297" selection-end-line="297" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/local/go/src/fmt/print.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="261">
-          <caret line="262" selection-start-line="262" selection-end-line="262" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/local/go/src/sync/rwmutex.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="254">
-          <caret line="86" selection-start-line="86" selection-end-line="86" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/local/go/src/io/ioutil/ioutil.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="286">
-          <caret line="43" column="5" selection-start-line="43" selection-start-column="5" selection-end-line="43" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///usr/local/go/src/reflect/type.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30866">
@@ -686,13 +656,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3190">
           <caret line="145" column="5" selection-start-line="145" selection-start-column="5" selection-end-line="145" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../github.com/ethereum/go-ethereum/rpc/client.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="254">
-          <caret line="156" selection-start-line="156" selection-end-line="156" />
         </state>
       </provider>
     </entry>
@@ -800,13 +763,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wacther/wacther_test.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/helper/helper_test.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="125">
@@ -814,90 +770,141 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/helper/helper.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="524">
-          <caret line="102" column="1" selection-start-line="102" selection-start-column="1" selection-end-line="102" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/local/go/src/runtime/asm_amd64.s">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="223">
-          <caret line="2360" selection-start-line="2360" selection-end-line="2360" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///usr/local/go/src/database/sql/sql.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
+        <state relative-caret-position="49280">
           <caret line="2252" selection-start-line="2252" selection-end-line="2252" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/transactionhandler/ethhandler_test.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="362">
-          <caret line="218" column="43" selection-start-line="218" selection-start-column="43" selection-end-line="218" selection-end-column="43" />
         </state>
       </provider>
     </entry>
     <entry file="file:///usr/local/go/src/runtime/panic.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="436">
+        <state relative-caret-position="11154">
           <caret line="511" selection-start-line="511" selection-end-line="511" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/configs/configs.go">
+    <entry file="file:///usr/local/go/src/encoding/json/decode.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="365">
-          <caret line="33" column="28" selection-start-line="33" selection-start-column="28" selection-end-line="33" selection-end-column="28" />
+        <state relative-caret-position="261">
+          <caret line="96" column="5" selection-start-line="96" selection-start-column="5" selection-end-line="96" selection-end-column="5" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main.go">
+    <entry file="file://$PROJECT_DIR$/../clmwallet-block-wacther1/configs/configs.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="438">
-          <caret line="39" selection-start-line="39" selection-end-line="39" />
-          <folding>
-            <element signature="e#14#66#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="374">
+          <caret line="17" column="6" selection-start-line="17" selection-start-column="6" selection-end-line="17" selection-end-column="6" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../github.com/go-sql-driver/mysql/packets.go">
+    <entry file="file://$PROJECT_DIR$/configs/configs.json" />
+    <entry file="file://$PROJECT_DIR$/configs/configs22.json" />
+    <entry file="file://$PROJECT_DIR$/configs.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="616">
-          <caret line="38" column="9" selection-start-line="38" selection-start-column="9" selection-end-line="38" selection-end-column="9" />
+        <state relative-caret-position="154">
+          <caret line="7" column="1" lean-forward="true" selection-start-line="7" selection-start-column="1" selection-end-line="7" selection-end-column="1" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wacther/wacther.go">
+    <entry file="file:///usr/local/go/src/runtime/asm_amd64.s">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-9029">
-          <caret line="97" column="1" lean-forward="true" selection-start-line="97" selection-start-column="1" selection-end-line="97" selection-end-column="1" />
+        <state relative-caret-position="421">
+          <caret line="2369" column="14" selection-start-line="2369" selection-start-column="14" selection-end-line="2369" selection-end-column="14" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/transactionhandler/ethhandler.go">
+    <entry file="file://$PROJECT_DIR$/configs/configs_test.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="294">
-          <caret line="516" column="2" selection-start-line="516" selection-start-column="2" selection-end-line="516" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/clinterface/transInterface.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="13">
-          <caret line="37" column="23" selection-start-line="37" selection-start-column="23" selection-end-line="37" selection-end-column="23" />
+        <state relative-caret-position="352">
+          <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/blockpool/strategicpool.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="310">
-          <caret line="157" column="9" lean-forward="true" selection-start-line="157" selection-start-column="9" selection-end-line="157" selection-end-column="9" />
+        <state relative-caret-position="1672">
+          <caret line="86" column="24" selection-start-line="86" selection-start-column="24" selection-end-line="86" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../github.com/ethereum/go-ethereum/rpc/client.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3058">
+          <caret line="157" column="52" selection-start-line="157" selection-start-column="52" selection-end-line="157" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../github.com/go-sql-driver/mysql/packets.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="550">
+          <caret line="35" column="16" lean-forward="true" selection-start-line="35" selection-start-column="16" selection-end-line="35" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../github.com/go-sql-driver/mysql/errors.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="748">
+          <caret line="39" column="4" selection-start-line="39" selection-start-column="4" selection-end-line="39" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/configs/configs.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="18" column="44" selection-start-line="18" selection-start-column="19" selection-end-line="18" selection-end-column="44" />
+          <folding>
+            <element signature="e#107#147#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/transactionhandler/ethhandler_test.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4928">
+          <caret line="228" selection-start-line="228" selection-end-line="228" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/helper/helper.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="946">
+          <caret line="51" column="5" selection-start-line="51" selection-start-column="5" selection-end-line="51" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wacther/wacther_test.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="418">
+          <caret line="23" column="1" lean-forward="true" selection-start-line="23" selection-start-column="1" selection-end-line="23" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="88">
+          <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/clinterface/transInterface.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1016">
+          <caret line="58" column="4" selection-start-line="58" selection-start-column="4" selection-end-line="58" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/transactionhandler/ethhandler.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="452" column="26" lean-forward="true" selection-start-line="452" selection-start-column="26" selection-end-line="452" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wacther/wacther.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="431">
+          <caret line="85" column="13" lean-forward="true" selection-start-line="85" selection-start-column="13" selection-end-line="85" selection-end-column="13" />
         </state>
       </provider>
     </entry>

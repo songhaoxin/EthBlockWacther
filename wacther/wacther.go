@@ -49,6 +49,7 @@ type BlockWacther struct {
 	// 之所以设计成 接口方式，是为了解耦 拉取区块功能 和 处理交易功能
 	// 这样，该模块可以轻松的重用到 比特币 等其他的平台上去
 	TransHandler clinterface.TransInterface
+
 }
 
 func Init() *BlockWacther {
@@ -64,10 +65,7 @@ func Init() *BlockWacther {
 
 	//第一次起动时，服务中需要确认的交易的最低区块号
 	b.latestFecthNumber = b.TransHandler.GetLatestNumberShould2Fecth()
-	/*
-	if latestNumberFromServer, err := b.TransHandler(); nil == err {
-		b.latestFecthNumber = latestNumberFromServer
-	}*/
+
 	log.Println("计算最小的需要确认的区块号:", b.latestFecthNumber)
 
 	return b
@@ -161,7 +159,6 @@ func (bw *BlockWacther) _fecthParseBlock() {
 
 	// 更新最新的区块号
 	bw.blockPool.SetLatestIdx(ethLastNode.Number)
-
 	//筛掉失败的区块交易
 	bw.ReceiveBlocksFilterFailed(ethLastNode)
 
@@ -203,7 +200,16 @@ func (bw *BlockWacther) _fecthParseBlock() {
 		if hashValueNuber <= 0 {break}
 
 		node = bw.fecthBlockByHash(hash)
+
+		var reConnet = 0
+		for i:= 0; i < reConnet;i ++ {
+			if nil != node {
+				break
+			}
+			node = bw.fecthBlockByHash(hash)
+		}
 		if nil == node {break}
+
 		hash = node.ParentHash
 		//筛掉失败的区块交易
 		bw.ReceiveBlocksFilterFailed(node)
@@ -313,9 +319,16 @@ func (bw *BlockWacther) fecthBlockByHash(blockHash string) *blocknode.BlockNodeI
 	}
 
 	var blockInfo = make(map[string]interface{})
+
+
 	if err := client.Call(&blockInfo, "eth_getBlockByHash", blockHash, true); err != nil {
 		log.Println(err)
-		return nil
+		time.Sleep(1)
+		bw.client, err = rpc.Dial(configs.GethHost)
+		if err := client.Call(&blockInfo, "eth_getBlockByHash", blockHash, true); err != nil {
+			log.Println(err)
+			return nil
+		}
 	}
 
 	// 如果没有找到区块信息
@@ -351,6 +364,7 @@ func (bw *BlockWacther) getClient() (client *rpc.Client, err error) {
 	}
 	return bw.client, err
 }
+
 
 ///解析区块信息
 func (bw *BlockWacther) parseBlock(blockInfo map[string]interface{}) string {
@@ -531,6 +545,6 @@ func erc20Value(input string) string {
 	if 138 != len(input) {
 		return ""
 	}
-	value := helper.Substr2(input, 74, 137)
+	value := helper.Substr2(input, 74, 138)
 	return value
 }

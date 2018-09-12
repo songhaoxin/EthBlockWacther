@@ -13,10 +13,10 @@ import (
 	"fmt"
 	"log"
 	"sort"
-	"strings"
 	"sync"
 
 	"github.com/ethereum/go-ethereum/metrics"
+	"strings"
 )
 
 type StrategicPool struct {
@@ -173,6 +173,7 @@ func (s *StrategicPool) LookSuccessedTransHashs() []string {
 			s.size--
 			v.Delete()
 		}
+
 	}
 
 	return affirmTransHashSlice

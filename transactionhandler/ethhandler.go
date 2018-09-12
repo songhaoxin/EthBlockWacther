@@ -445,6 +445,7 @@ func (e EthTransactionHandler)GetTransMainInfo(hash string) ( string, string, st
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 func (t EthTransactionHandler)GetLatestNumberShould2Fecth() int64  {
+	/*
 	number1 := t.GetLowestIdxFromGether()
 	number2 := t.GetLowestIdxFromServer()
 	if number1 < number2 {
@@ -460,6 +461,7 @@ func (t EthTransactionHandler)GetLatestNumberShould2Fecth() int64  {
 			return number2
 		}
 	}
+	*/
 	return -1
 }
 
@@ -482,6 +484,9 @@ func (t EthTransactionHandler) GetLowestIdxFromServer() int64 {
 	err := db.QueryRow(`SELECT  block_number FROM send_out_detail  WHERE is_confirm = 0 ORDER BY block_number ASC LIMIT 0,1`).Scan(&lowestNumber)
 	if nil != err {
 		return -1
+	}
+	if 0 == lowestNumber {
+		lowestNumber = -1
 	}
 	return lowestNumber
 }

@@ -58,8 +58,5 @@ type TransInterface interface {
 
 	GetLatestNumberShould2Fecth() int64
 
-	//SetLowestIdxFromGether(number int64) error
-
-	//GetLowestIdxFromGether() int64
 
 }
